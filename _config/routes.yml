@@ -1,0 +1,9 @@
+---
+Name: GenericReporting
+---
+DevelopmentAdmin:
+  registered_controllers:
+    reporting:
+      controller: 'GenericReporting'
+      links:
+        reporting: 'Build reports'
