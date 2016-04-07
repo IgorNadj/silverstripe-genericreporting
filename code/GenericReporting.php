@@ -28,7 +28,7 @@ class GenericReporting extends Controller {
 	 * Request param modelClassName required, everything else optional
 	 */
 	public function report($httpRequest){
-		$builder = new ReportBuilder();
+		$builder = new ReportRequestBuilder();
 		
 		$request = $builder->getRequest($httpRequest);
 		if(!$request) return;

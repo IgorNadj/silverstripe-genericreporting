@@ -1,7 +1,7 @@
 <?php 
 
 
-class ReportBuilder {
+class ReportRequestBuilder {
 	
 	
 	/**

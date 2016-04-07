@@ -44,6 +44,8 @@
 				</tr>
 			</tbody>
 		</table>
+		
+		<div class="total-num-rows">Total rows: {{response.totalNumRows}}</div>
 	
 		<pre>{{response.sql}}</pre>
 	
