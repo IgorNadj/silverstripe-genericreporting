@@ -41,8 +41,8 @@
 		return {
 			run: function(requestRaw){
 				var request = {
-					dataObject: requestRaw.dataObject,
-					'fields[]': requestRaw.fields, // have to do this, angular is silly
+					dataObject: requestRaw.dataObjectClassName,
+					'fields[]': requestRaw.selectedFields, // have to do this, angular is silly
 					filters: requestRaw.filters
 				};
 				api.report(request).then(function(apiResp){
@@ -66,8 +66,8 @@
 		
 		$scope.report = {
 			name: null,         // TODO
-			dataObject: null,   // dataObjectClassName
-			fields: [],         // selectedFields
+			dataObjectClassName: null,
+			selectedFields: [],
 			filters: {}
 		};
 		
@@ -152,11 +152,11 @@
 		
 		$scope.updateReport = function(){
 			if($scope.dataObject){
-				$scope.report.dataObject = $scope.dataObject.className;
+				$scope.report.dataObjectClassName = $scope.dataObject.className;
 			}	
 			if($scope.fields){
 				for(var i in $scope.fields){
-					$scope.report.fields.push($scope.fields[i].name);
+					$scope.report.selectedFields.push($scope.fields[i].name);
 				}
 			}
 			if($scope.filters){
