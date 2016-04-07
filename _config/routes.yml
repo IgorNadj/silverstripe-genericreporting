@@ -6,4 +6,4 @@ DevelopmentAdmin:
     reporting:
       controller: 'GenericReporting'
       links:
-        reporting: 'Build reports'
+        reporting: 'Reports'

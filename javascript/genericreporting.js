@@ -4,16 +4,39 @@
 	.factory('api', ['$http', function($http){
 		var API_URL = '/dev/reporting';
 		
+		var _getStore = function(){
+			var defaultStore = {
+				savedReports: []
+			};
+			return window.localStorage.genericReporting ? JSON.parse(window.localStorage.genericReporting) : defaultStore;
+		};
+		var _setStore = function(store){
+			window.localStorage.genericReporting = JSON.stringify(store);
+		};
+		
 		return {
 			getDataObjects: function(){
 				return $http.get(API_URL+'/getDataObjects');
 			},
 			report: function(params){
 				return $http.get(API_URL+'/report', { params: params });
+			},
+			save: function(report){
+				var store = _getStore();
+				
+				var newID = store.savedReports.length;
+				store.savedReports[newID] = report;
+				
+				_setStore(store);
+				return newID;
+			},
+			get: function(id){
+				var store = _getStore();
+				return store.savedReports[id];
 			}
 		}
 	}])
-	.factory('report', ['api', function(api){
+	.factory('reportRunner', ['api', function(api){
 		var listeners = [];
 		return {
 			run: function(requestRaw){
@@ -38,21 +61,28 @@
 			}
 		}
 	}])
-	.controller('Request', ['$scope', 'api', 'report', function($scope, api, report){
+	.controller('Request', ['$scope', 'api', 'reportRunner', function($scope, api, reportRunner){
+		var _isFiltersInit = false;
+		
+		$scope.report = {
+			name: null,         // TODO
+			dataObject: null,   // dataObjectClassName
+			fields: [],         // selectedFields
+			filters: {}
+		};
 		
 		$scope.dataObject = null;
 		$scope.fields = null;
 		$scope.filters = null;
 		
 		$scope.dataObjects = null;
-		$scope.isFiltersInit = false;
 		
 		api.getDataObjects().then(function(apiResp){
 			console.log('getDataObjects: ', apiResp);
 			$scope.dataObjects = apiResp.data;
 		});
 		
-		$scope.updateFilters = function(){
+		$scope.updateFiltersBuilder = function(){
 			if(!$scope.dataObject) return;
 			var filters = [];
 			for(var i in $scope.dataObject.fields){
@@ -79,13 +109,13 @@
 			$('.filters-builder').queryBuilder({
 				filters: filters
 			});
-			$scope.isFiltersInit = true;
-			$scope.onFiltersChanged();
+			_isFiltersInit = true;
+			_onFiltersChanged();
 		};
 		
 		// external to angular, have to pull in changes manually
-		$scope.onFiltersChanged = function(){
-			if(!$scope.isFiltersInit) return;
+		var _onFiltersChanged = function(){
+			if(!_isFiltersInit) return;
 			
 			// store rules
 			var rules = $('.filters-builder').queryBuilder('getRules');
@@ -97,30 +127,7 @@
 		
 		
 		$scope.runReport = function(){
-			var request = $scope.buildRequest();
-			report.run(request);
-		};
-		
-		$scope.buildRequest = function(){
-			var r = {
-				dataObject: null,
-				fields: [],
-				filters: {}
-			};
-			
-			if($scope.dataObject){
-				r.dataObject = $scope.dataObject.className;
-			}	
-			if($scope.fields){
-				for(var i in $scope.fields){
-					r.fields.push($scope.fields[i].name);
-				}
-			}
-			if($scope.filters){
-				r.filters = $scope.buildFilters($scope.filters);
-			}
-			
-			return r;
+			reportRunner.run($scope.report);
 		};
 		
 		$scope.buildFilters = function(node){
@@ -143,26 +150,55 @@
 			}
 		};
 		
+		$scope.updateReport = function(){
+			if($scope.dataObject){
+				$scope.report.dataObject = $scope.dataObject.className;
+			}	
+			if($scope.fields){
+				for(var i in $scope.fields){
+					$scope.report.fields.push($scope.fields[i].name);
+				}
+			}
+			if($scope.filters){
+				$scope.report.filters = $scope.buildFilters($scope.filters);
+			}
+			console.log('updateReport', $scope.report);
+		};
 		
-		$scope.$watch('dataObject', $scope.updateFilters);
 		
-		$scope.$watch('dataObject', $scope.runReport);
-		$scope.$watch('fields', $scope.runReport);
-		$scope.$watch('filters', $scope.runReport);
+		$scope.$watchGroup(['dataObject', 'fields', 'filters'], function(){
+			$scope.updateReport();
+			$scope.runReport();
+		});
+		
+		$scope.$watch('dataObject', $scope.updateFiltersBuilder);
 		
 		$('.filters-builder').change(function(){
 			$scope.$apply(function(){
-				$scope.onFiltersChanged();
+				_onFiltersChanged();
 			});
 		});
 		
 	}])
-	.controller('Response', ['$scope', 'report', function($scope, report){
-		report.listen(function(data){
+	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
+		reportRunner.listen(function(data){
 			console.log('reportResponse data: ', data);
 			$scope.request = data.request;
 			$scope.response = data.response;
 		});
+		
+	}])
+	.controller('Persistance', ['$scope', 'api', function($scope, api){
+		$scope.saved = [];
+		
+		$scope.toSave = {
+			name: 'New Report',
+			report: null
+		};
+		
+		$scope.save = function(){
+			api.save();
+		};
 		
 	}]);
 })();

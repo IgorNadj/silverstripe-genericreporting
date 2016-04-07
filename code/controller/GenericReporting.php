@@ -4,12 +4,36 @@ class GenericReporting extends Controller {
 	
 	private static $allowed_actions = array(
 		'getDataObjects',
-		'report'
+		'report',
+		'view',
+		'saveReport',
 	);
 	
+	
+	/*
+	 * Views
+	 */
+	
 	public function index(){
-		return $this->renderWith('GenericReporting');
+		return $this->renderWith('GenericReportList');
 	}
+	
+	public function view(SS_HTTPRequest $request){
+		$id = $request->param('ID');
+		if(!$id){
+			// no id provided, start from scratch
+			
+		}
+		
+		return $this->renderWith('GenericReport');
+	}
+	
+
+	
+	
+	/*
+	 * API calls
+	 */
 	
 	public function getDataObjects($request){
 		$r = array();
@@ -39,6 +63,10 @@ class GenericReporting extends Controller {
 	public function formatResponse(SS_HTTPRequest $request, $data){
 		// TODO: switch formats based on request param
 		return json_encode($data);
+	}
+	
+	public function saveReport(SS_HTTPRequest $request){
+		// TODO
 	}
 	
 	
