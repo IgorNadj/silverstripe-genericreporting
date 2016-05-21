@@ -1,6 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.2/angular.min.js"></script>
-<script src="/vendor/components/jquery/jquery.js"></script>
-<script src="/vendor/mistic100/jquery-querybuilder/dist/js/query-builder.standalone.js"></script>
+<script src="/framework/thirdparty/jquery/jquery.js"></script>
+<script src="/genericreporting/javascript/query-builder.standalone.min.js"></script>
 <script src="/genericreporting/javascript/genericreporting.js"></script>
 
 <style>
