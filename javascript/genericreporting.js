@@ -154,6 +154,7 @@
 			if($scope.dataObject){
 				$scope.report.dataObjectClassName = $scope.dataObject.className;
 			}	
+			$scope.report.selectedFields = [];
 			if($scope.fields){
 				for(var i in $scope.fields){
 					$scope.report.selectedFields.push($scope.fields[i].name);
