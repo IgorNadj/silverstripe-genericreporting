@@ -9,6 +9,7 @@ class GenericReporting extends Controller {
 		'saveReport',
 	);
 	
+
 	
 	/*
 	 * Views
@@ -62,6 +63,7 @@ class GenericReporting extends Controller {
 	
 	public function formatResponse(SS_HTTPRequest $request, $data){
 		// TODO: switch formats based on request param
+		$this->getResponse()->addHeader('Content-Type', 'application/json');
 		return json_encode($data);
 	}
 	
