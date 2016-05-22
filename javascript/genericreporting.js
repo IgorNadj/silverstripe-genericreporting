@@ -88,12 +88,18 @@
 			console.log('getDataObjects: ', apiResp);
 			$scope.dataObjects = apiResp.data;
 			// default
+			var firstDataObject = null;
 			for(var i in $scope.dataObjects){
 				var d = $scope.dataObjects[i];
+				if(!firstDataObject) firstDataObject = d;
 				if(d.className == $scope.defaultDataObject){
 					$scope.dataObject = d;
 					break;
 				}
+			}
+			// otherwise select first
+			if(!$scope.dataObject && firstDataObject){
+				$scope.dataObject = firstDataObject;
 			}
 		});
 		
