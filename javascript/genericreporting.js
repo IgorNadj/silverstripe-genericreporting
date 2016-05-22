@@ -81,10 +81,20 @@
 		$scope.sortDesc = 1;
 		
 		$scope.dataObjects = null;
+
+		$scope.defaultDataObject = 'Page';
 		
 		api.getDataObjects().then(function(apiResp){
 			console.log('getDataObjects: ', apiResp);
 			$scope.dataObjects = apiResp.data;
+			// default
+			for(var i in $scope.dataObjects){
+				var d = $scope.dataObjects[i];
+				if(d.className == $scope.defaultDataObject){
+					$scope.dataObject = d;
+					break;
+				}
+			}
 		});
 		
 		$scope.updateFiltersBuilder = function(){
