@@ -39,19 +39,21 @@
 	.factory('reportRunner', ['api', function(api){
 		var listeners = [];
 		return {
-			run: function(requestRaw){
-				var request = {
-					dataObject: requestRaw.dataObjectClassName,
-					'fields[]': requestRaw.selectedFields, // have to do this, angular is silly
-					filters: requestRaw.filters,
-					sortBy: requestRaw.sortBy,
-					sortDesc: requestRaw.sortDesc,
-					limit: requestRaw.limit,
-					offset: requestRaw.offset
+			run: function(request){
+				if(!request.dataObject) return;
+				var httpRequestParams = {
+					dataObject: request.dataObject.className,
+					'fields[]': request.selectedFields, // have to do this, angular is silly
+					filters:    request.filters,
+					sortBy:     request.sortBy,
+					sortDesc:   request.sortDesc,
+					limit:      request.limit,
+					offset:     request.offset
 				};
-				api.report(request).then(function(apiResp){
+				api.report(httpRequestParams).then(function(apiResp){
 					var runResult = {
-						request: requestRaw,
+						httpRequestParams: httpRequestParams,
+						request: request,
 						response: apiResp.data
 					};
 					for(var i in listeners){
@@ -70,7 +72,7 @@
 		
 		$scope.report = {
 			name: null,         // TODO
-			dataObjectClassName: null,
+			dataObject: null,
 			selectedFields: [],
 			filters: {},
 			sort: null
@@ -179,7 +181,7 @@
 		
 		$scope.updateReport = function(){
 			if($scope.dataObject){
-				$scope.report.dataObjectClassName = $scope.dataObject.className;
+				$scope.report.dataObject = $scope.dataObject;
 			}	
 			$scope.report.selectedFields = [];
 			if($scope.fields){
@@ -217,14 +219,46 @@
 	}])
 	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
 		reportRunner.listen(function(data){
-			console.log('reportResponse data: ', data);
 			$scope.request = data.request;
 			$scope.response = data.response;
+			console.log('reference', data.reference);
 		});
+
+		$scope.updateHeaderColumns = function(){
+			if(!$scope.response) return;
+			if($scope.response.rows.length == 0) return;
+			// look up DataObject fields by first response row
+			var r = [];
+			var respRowKeys = Object.keys($scope.response.rows[0]);
+			console.log('respRowKeys', respRowKeys);
+			for(var i in respRowKeys){
+				var respFieldName = respRowKeys[i];
+				var respField = null;
+				for(var x in $scope.request.dataObject.fields){
+					var reqField = $scope.request.dataObject.fields[x];
+					//console.log('CHECK', respFieldName, reqField.name);
+					if(reqField.name == respFieldName){
+						respField = reqField;
+						break;
+					}
+				}
+				if(respField){
+					r.push(respField);
+				}else{
+					// should never happen...
+					console.warn('Server returned column we dont know about: '+respFieldName);
+					r.push({
+						name: respFieldName,
+						humanReadableName: respFieldName
+					});
+				}
+			}
+			console.log('headerColumns', r);
+			$scope.headerColumns = r; 
+		};
 
 		$scope.updatePagination = function(){
 			if(!$scope.response) return;
-			console.log('updatePagination', $scope.response);
 
 			$scope.firstRowIndex = $scope.response.offset;
 			$scope.lastRowIndex = $scope.response.offset + $scope.response.limit - 1;
@@ -287,6 +321,7 @@
 			}
 		};
 
+		$scope.$watch('response', $scope.updateHeaderColumns);
 		$scope.$watch('response', $scope.updatePagination);
 		
 	}])

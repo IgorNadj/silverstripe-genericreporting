@@ -41,11 +41,11 @@ class GenericReporting extends Controller {
 		foreach(SSReflection::getAllDataObjectClasses() as $class){
 			/* @var $rClass ReflectionClass */
 			$d = new DataObjectReflection();
-			$d->className = $class->getName();
-			$d->fields = SSReflection::getDataObjectFields($class->getName());
 			
+			$d->className = $class->getName();
 			$d->humanReadableName = SSReflection::getClassSingularName($d->className);
-			// TODO: add human readable field names as well
+
+			$d->fields = SSReflection::getDataObjectFields($class->getName());
 
 			$r[] = $d;
 		}

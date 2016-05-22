@@ -18,7 +18,7 @@
 		</fieldset>
 		<fieldset>
 			<label>Columns</label>
-			<select multiple="multiple" ng-model="fields" ng-options="field.name for field in dataObject.fields"></select>
+			<select multiple="multiple" ng-model="fields" ng-options="field.humanReadableName for field in dataObject.fields"></select>
 		</fieldset>
 		<fieldset>
 			<label>Filters</label>
@@ -49,8 +49,8 @@
 		<table>
 			<thead>
 				<tr>
-					<th ng-repeat="(key, value) in response.rows[0]" ng-if="response.rows.length > 0">
-						{{key}}
+					<th ng-repeat="field in headerColumns" ng-if="response.rows.length > 0">
+						{{field.humanReadableName}}
 					</th>
 				</tr>
 			</thead>

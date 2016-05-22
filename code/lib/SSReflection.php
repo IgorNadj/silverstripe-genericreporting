@@ -11,6 +11,8 @@ class SSReflection {
 		'Image_Cached' => 'Image_Cached',
 	); 
 
+
+
 	/**
 	 * @return array of ReflectionClass
 	 */
@@ -35,18 +37,48 @@ class SSReflection {
 	 * @return array of array('name' => string, 'type' => string);
 	 */
 	public static function getDataObjectFields($className){
-		$r = array();
-		
 		// First we manually add in the base-level fields (ID, Created etc.)
-		$r[] = array('name' => 'ID',         'type' => 'Int');
-		$r[] = array('name' => 'ClassName',  'type' => 'Varchar(255)');
-		$r[] = array('name' => 'LastEdited', 'type' => 'SS_Datetime');
-		$r[] = array('name' => 'Created',    'type' => 'SS_Datetime');
+		$r = array(
+			array(
+				'name' => 'ID', 
+				'humanReadableName' => 'ID', 
+				'type' => 'Int',
+			),
+			array(
+				'name' => 'ClassName', 
+				'humanReadableName' => 'Class Name', 
+				'type' => 'Varchar(255)',
+			),
+			array(
+				'name' => 'RecordClassName', 
+				'humanReadableName' => 'Record Class Name', 
+				'type' => 'Varchar(255)',
+			),
+			array(
+				'name' => 'LastEdited', 
+				'humanReadableName' => 'Last Edited', 
+				'type' => 'SS_Datetime',
+			),
+			array(
+				'name' => 'Created', 
+				'humanReadableName' => 'Created', 
+				'type' => 'SS_Datetime',
+			),
+		);
 		
 		$instance = new $className();
 		/* @var $instance DataObject */
+		
+		// pre-fetch labels (human readable names) for performance
+		$fieldLabelsMap = $instance->fieldLabels();
+
+		// build field spec
 		foreach($instance->db() as $k => $v){
-			$r[] = array('name' => $k, 'type' => $v);
+			$r[] = array(
+				'name' => $k, 
+				'humanReadableName' => $fieldLabelsMap[$k],
+				'type' => $v,
+			);
 		}
 		
 		return $r;
