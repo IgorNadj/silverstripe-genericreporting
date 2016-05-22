@@ -12,6 +12,13 @@ class SSReflection {
 	); 
 
 
+	public static $magic_fields = array(
+		'SiteTree' => array(
+			'ParentID' => 'Int', // no idea where this is defined...
+		)
+	);
+
+
 
 	/**
 	 * @return array of ReflectionClass
@@ -72,8 +79,12 @@ class SSReflection {
 		// pre-fetch labels (human readable names) for performance
 		$fieldLabelsMap = $instance->fieldLabels();
 
+		// get all fields
+		$allFields = $instance->db();
+		$allFields = array_merge($allFields, self::getMagicFields($className));
+
 		// build field spec
-		foreach($instance->db() as $k => $v){
+		foreach($allFields as $k => $v){
 			$r[] = array(
 				'name' => $k, 
 				'humanReadableName' => $fieldLabelsMap[$k],
@@ -93,5 +104,23 @@ class SSReflection {
 		return $obj->singular_name();
 	}
 	
+
+	/**
+	  * @return array of name => type
+	  */
+	public static function getMagicFields($className){
+		// direct match against registered magic fields
+		if(isset(self::$magic_fields[$className])){
+			return self::$magic_fields[$className];	
+		}
+		// otherwise if this is a subtype it will have those fields as well
+		$reflectionClass = new ReflectionClass($className);
+		foreach(self::$magic_fields as $magicClass => $magicClassFields){
+			if($reflectionClass->isSubclassOf($magicClass)){
+				return $magicClassFields;
+			}
+		}
+		return array();
+	}
 	
 }
