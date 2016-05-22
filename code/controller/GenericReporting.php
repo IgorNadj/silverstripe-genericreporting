@@ -43,7 +43,8 @@ class GenericReporting extends Controller {
 			$d = new DataObjectReflection();
 			$d->className = $class->getName();
 			$d->fields = SSReflection::getDataObjectFields($class->getName());
-			
+			// TODO: add human readable field names as well
+
 			$r[] = $d;
 		}
 		echo $this->formatResponse($request, $r);

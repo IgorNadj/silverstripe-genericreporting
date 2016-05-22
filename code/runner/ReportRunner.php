@@ -11,6 +11,9 @@ class ReportRunner {
 		
 		$startTimeMs = $this->getTimestampMs();
 
+		$dataQuery = null;
+		$totalQuery = null;
+
 		/*
 		 * Data Query
 		 */
@@ -22,12 +25,18 @@ class ReportRunner {
 		if($request->fields) $dataQuery->setQueriedColumns($request->fields);
 		// filter
 		$request->filter->apply($dataQuery);
-		
+		// sort
 		if($request->sortBy){
 			$sortDescStr = $request->sortDesc ? 'DESC' : 'ASC';
 			$dataQuery->sort($request->sortBy, $sortDescStr);
 		}
-		// TODO: limit and offset / pagination
+		// limit and offset
+		//  - we clone the data query here to get the total query because the total query is not limited
+		$totalQuery = clone $dataQuery;
+		//
+		$dataQuery->limit($request->limit, $request->offset);
+
+
 		// Run
 		$response = new ReportResponse();
 		$response->sql = $dataQuery->sql();
@@ -51,11 +60,13 @@ class ReportRunner {
 		/*
 		 * Total Query
 		 */
-		$response->totalNumRows = $dataQuery->count();
+		$response->totalNumRows = $totalQuery->count();
 		
 		$endTimeMs = $this->getTimestampMs();
 		$response->timeTakenMs = $endTimeMs - $startTimeMs;
 
+		$response->offset = $request->offset;
+		$response->limit = $request->limit;
 		
 		// DONE
 		return $response;

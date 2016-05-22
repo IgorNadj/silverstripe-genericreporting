@@ -39,6 +39,10 @@
 				</label>
 			</div>
 		</fieldset>
+		<fieldset>
+			<label>Number of results</label>
+			<input ng-model="limit" />
+		</fieldset>
 	</section>
 	<hr/>
 	<section class="response" ng-controller="Response">
@@ -58,8 +62,24 @@
 				</tr>
 			</tbody>
 		</table>
-		
-		<div class="total-num-rows">Total rows: {{response.totalNumRows}}</div>
+		<div class="pagination">
+			<div class="page-info">
+				Showing rows <span ng-bind="firstRowNumber"></span> to 
+				<span ng-bind="lastRowNumber"></span> of 
+				<span ng-bind="response.totalNumRows"></span>
+			</div>
+
+			<div class="page-nav">
+				<button ng-disabled="!hasPrevious" ng-click="goToPreviousPage()"> Previous </button>
+				<ol class="pages">
+					<li ng-repeat="page in pages">
+						<span ng-if="page.isCurrentPage" ng-bind="page.number"></span>
+						<a ng-if="!page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
+					</li>
+				</ul>
+				<button ng-disabled="!hasNext" ng-click="goToNextPage()"> Next </button>
+			</div>
+		</div>
 	
 		<div class="time-taken">
 			Took {{response.timeTakenMs/1000}} seconds 

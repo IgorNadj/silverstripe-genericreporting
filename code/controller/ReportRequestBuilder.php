@@ -17,6 +17,8 @@ class ReportRequestBuilder {
 		$r->fields = $request->getVar('fields');
 		$r->sortBy = $request->getVar('sortBy');
 		$r->sortDesc = (boolean) $request->getVar('sortDesc');
+		if($request->getVar('offset')) $r->offset = (int) $request->getVar('offset');
+		if($request->getVar('limit')) $r->limit = (int) $request->getVar('limit');
 		
 		return $r;
 	}

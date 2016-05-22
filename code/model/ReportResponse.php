@@ -7,6 +7,9 @@ class ReportResponse {
 	public $request; 
 	
 	public $rows = array();
+	
+	public $offset;
+	public $limit;
 	public $totalNumRows;
 
 	public $timeTakenMs;

@@ -45,11 +45,13 @@
 					'fields[]': requestRaw.selectedFields, // have to do this, angular is silly
 					filters: requestRaw.filters,
 					sortBy: requestRaw.sortBy,
-					sortDesc: requestRaw.sortDesc
+					sortDesc: requestRaw.sortDesc,
+					limit: requestRaw.limit,
+					offset: requestRaw.offset
 				};
 				api.report(request).then(function(apiResp){
 					var runResult = {
-						request: request,
+						request: requestRaw,
 						response: apiResp.data
 					};
 					for(var i in listeners){
@@ -79,10 +81,14 @@
 		$scope.filters = null;
 
 		$scope.sortDesc = 1;
+		$scope.limit = 20;
+		$scope.offset = 0;
 		
 		$scope.dataObjects = null;
 
 		$scope.defaultDataObject = 'Page';
+
+		// TODO: use summary_fields as default columns
 		
 		api.getDataObjects().then(function(apiResp){
 			console.log('getDataObjects: ', apiResp);
@@ -189,11 +195,13 @@
 				$scope.report.sortBy = $scope.sortBy.name;
 			}
 			$scope.report.sortDesc = $scope.sortDesc;
+			$scope.report.limit = $scope.limit;
+			$scope.report.offset = $scope.offset;
 			console.log('updateReport', $scope.report);
 		};
 		
 		
-		$scope.$watchGroup(['dataObject', 'fields', 'filters', 'sortBy', 'sortDesc'], function(){
+		$scope.$watchGroup(['dataObject', 'fields', 'filters', 'sortBy', 'sortDesc', 'limit'], function(){
 			$scope.updateReport();
 			$scope.runReport();
 		});
@@ -213,6 +221,73 @@
 			$scope.request = data.request;
 			$scope.response = data.response;
 		});
+
+		$scope.updatePagination = function(){
+			if(!$scope.response) return;
+			console.log('updatePagination', $scope.response);
+
+			$scope.firstRowIndex = $scope.response.offset;
+			$scope.lastRowIndex = $scope.response.offset + $scope.response.limit - 1;
+			if($scope.lastRowIndex > $scope.response.totalNumRows - 1){
+				$scope.lastRowIndex = $scope.response.totalNumRows - 1;
+			}
+
+			$scope.firstRowNumber = $scope.firstRowIndex + 1;
+			$scope.lastRowNumber = $scope.lastRowIndex + 1;
+
+			var pages = [];
+			var pageNumber = 1;
+			for(var i = 0; i < $scope.response.totalNumRows; i += $scope.response.limit){
+				pages.push({
+					offset: i,
+					number: pageNumber,
+					isCurrentPage: i >= $scope.firstRowIndex && i <= $scope.lastRowIndex
+				});
+				pageNumber++;
+			}
+			$scope.pages = pages;
+
+			$scope.hasPrevious = $scope.firstRowIndex > 0;
+			$scope.hasNext = $scope.lastRowIndex < $scope.response.totalNumRows - 1;
+		};
+
+		$scope.goToOffset = function(offset){
+			var updatedRequest = $scope.request;
+			updatedRequest.offset = offset;
+			reportRunner.run(updatedRequest);
+		};
+
+		$scope.goToNextPage = function(){
+			if(!$scope.hasNext) return;
+			var passedNext = false;
+			for(var i in $scope.pages){
+				var p = $scope.pages[i];
+				if(passedNext){
+					console.log('next page: ', p);
+					$scope.goToOffset(p.offset);
+					return;
+				}
+				if(p.isCurrentPage){
+					passedNext = true;
+				}
+			}
+		};
+
+		$scope.goToPreviousPage = function(){
+			if(!$scope.hasPrevious) return;
+			var previous = null;
+			for(var i in $scope.pages){
+				var p = $scope.pages[i];
+				if(p.isCurrentPage){
+					console.log('prev page: ', previous);
+					$scope.goToOffset(previous.offset);
+					return;
+				}
+				previous = p;
+			}
+		};
+
+		$scope.$watch('response', $scope.updatePagination);
 		
 	}])
 	.controller('Persistance', ['$scope', 'api', function($scope, api){
