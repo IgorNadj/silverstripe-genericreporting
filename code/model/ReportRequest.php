@@ -5,6 +5,7 @@ class ReportRequest {
 	
 	public $dataObject;
 	public $fields = array();
+
 	
 	
 	/**
@@ -12,7 +13,8 @@ class ReportRequest {
 	 */
 	public $filter;
 	
-	//public $sort; // TODO
+	public $sortBy;
+	public $sortDesc = true;
 	
 }
 

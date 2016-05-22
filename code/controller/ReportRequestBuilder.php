@@ -15,6 +15,8 @@ class ReportRequestBuilder {
 		$r->dataObject = $dataObject;
 		$r->filter = self::buildFilterObjectFromArray(self::getFiltersArray($request));
 		$r->fields = $request->getVar('fields');
+		$r->sortBy = $request->getVar('sortBy');
+		$r->sortDesc = (boolean) $request->getVar('sortDesc');
 		
 		return $r;
 	}

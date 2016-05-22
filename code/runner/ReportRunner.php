@@ -20,7 +20,11 @@ class ReportRunner {
 		if($request->fields) $dataQuery->setQueriedColumns($request->fields);
 		// filter
 		$request->filter->apply($dataQuery);
-		// TODO: sorting
+		
+		if($request->sortBy){
+			$sortDescStr = $request->sortDesc ? 'DESC' : 'ASC';
+			$dataQuery->sort($request->sortBy, $sortDescStr);
+		}
 		// TODO: limit and offset / pagination
 		// Run
 		$response = new ReportResponse();

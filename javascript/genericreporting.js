@@ -43,7 +43,9 @@
 				var request = {
 					dataObject: requestRaw.dataObjectClassName,
 					'fields[]': requestRaw.selectedFields, // have to do this, angular is silly
-					filters: requestRaw.filters
+					filters: requestRaw.filters,
+					sortBy: requestRaw.sortBy,
+					sortDesc: requestRaw.sortDesc
 				};
 				api.report(request).then(function(apiResp){
 					var runResult = {
@@ -68,12 +70,15 @@
 			name: null,         // TODO
 			dataObjectClassName: null,
 			selectedFields: [],
-			filters: {}
+			filters: {},
+			sort: null
 		};
 		
 		$scope.dataObject = null;
 		$scope.fields = null;
 		$scope.filters = null;
+
+		$scope.sortDesc = 1;
 		
 		$scope.dataObjects = null;
 		
@@ -163,11 +168,16 @@
 			if($scope.filters){
 				$scope.report.filters = $scope.buildFilters($scope.filters);
 			}
+			$scope.report.sortBy = null;
+			if($scope.sortBy){
+				$scope.report.sortBy = $scope.sortBy.name;
+			}
+			$scope.report.sortDesc = $scope.sortDesc;
 			console.log('updateReport', $scope.report);
 		};
 		
 		
-		$scope.$watchGroup(['dataObject', 'fields', 'filters'], function(){
+		$scope.$watchGroup(['dataObject', 'fields', 'filters', 'sortBy', 'sortDesc'], function(){
 			$scope.updateReport();
 			$scope.runReport();
 		});

@@ -25,6 +25,20 @@
 			<div class="filters-builder"></div>
 			<pre class="filters-debug"></pre>
 		</fieldset>
+		<fieldset>
+			<label>Sort</label>
+			<select ng-model="sortBy" ng-options="field.name for field in dataObject.fields"></select>
+			<div>
+				<label>
+					<input type="radio" name="sortDesc" ng-model="sortDesc" value="1" />
+					Descending
+				</label>
+				<label>
+					<input type="radio" name="sortDesc" ng-model="sortDesc" value="0" /> 
+					Ascending
+				</label>
+			</div>
+		</fieldset>
 	</section>
 	<hr/>
 	<section class="response" ng-controller="Response">
