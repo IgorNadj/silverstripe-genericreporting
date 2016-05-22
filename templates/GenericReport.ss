@@ -61,7 +61,13 @@
 		
 		<div class="total-num-rows">Total rows: {{response.totalNumRows}}</div>
 	
+		<div class="time-taken">
+			Took {{response.timeTakenMs/1000}} seconds 
+		</div>
+
 		<pre>{{response.sql}}</pre>
+
+
 	
 	</section>
 	<hr/>

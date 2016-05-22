@@ -8,5 +8,7 @@ class ReportResponse {
 	
 	public $rows = array();
 	public $totalNumRows;
+
+	public $timeTakenMs;
 	
 }

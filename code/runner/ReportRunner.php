@@ -9,6 +9,8 @@ class ReportRunner {
 	public function runReport(ReportRequest $request){
 		$obj = $request->dataObject;
 		
+		$startTimeMs = $this->getTimestampMs();
+
 		/*
 		 * Data Query
 		 */
@@ -51,9 +53,16 @@ class ReportRunner {
 		 */
 		$response->totalNumRows = $dataQuery->count();
 		
+		$endTimeMs = $this->getTimestampMs();
+		$response->timeTakenMs = $endTimeMs - $startTimeMs;
+
 		
 		// DONE
 		return $response;
+	}
+
+	protected function getTimestampMs(){
+		return round(microtime(true) * 1000);
 	}
 	
 }
