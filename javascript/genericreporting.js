@@ -199,7 +199,6 @@
 			$scope.report.sortDesc = $scope.sortDesc;
 			$scope.report.limit = $scope.limit;
 			$scope.report.offset = $scope.offset;
-			console.log('updateReport', $scope.report);
 		};
 		
 		
@@ -221,8 +220,9 @@
 		reportRunner.listen(function(data){
 			$scope.request = data.request;
 			$scope.response = data.response;
-			console.log('reference', data.reference);
 		});
+
+		$scope.smartPaginationNumUiElements = 7;
 
 		$scope.updateHeaderColumns = function(){
 			if(!$scope.response) return;
@@ -230,13 +230,11 @@
 			// look up DataObject fields by first response row
 			var r = [];
 			var respRowKeys = Object.keys($scope.response.rows[0]);
-			console.log('respRowKeys', respRowKeys);
 			for(var i in respRowKeys){
 				var respFieldName = respRowKeys[i];
 				var respField = null;
 				for(var x in $scope.request.dataObject.fields){
 					var reqField = $scope.request.dataObject.fields[x];
-					//console.log('CHECK', respFieldName, reqField.name);
 					if(reqField.name == respFieldName){
 						respField = reqField;
 						break;
@@ -253,7 +251,6 @@
 					});
 				}
 			}
-			console.log('headerColumns', r);
 			$scope.headerColumns = r; 
 		};
 
@@ -271,6 +268,7 @@
 
 			var pages = [];
 			var pageNumber = 1;
+			var currentPageIndex = null;
 			for(var i = 0; i < $scope.response.totalNumRows; i += $scope.response.limit){
 				pages.push({
 					offset: i,
@@ -283,6 +281,76 @@
 
 			$scope.hasPrevious = $scope.firstRowIndex > 0;
 			$scope.hasNext = $scope.lastRowIndex < $scope.response.totalNumRows - 1;
+
+			$scope.updateSmartPagination();
+		};
+
+		$scope.updateSmartPagination = function(){
+			// show only pages around context (start, current, end)
+			var currentPageIndex = 0;
+			for(var i in $scope.pages){
+				var p = $scope.pages[i];
+				if(p.isCurrentPage){
+					currentPageIndex = parseInt(i, 10); // why do we have to parse?
+					break;
+				}
+			}
+
+			// divide into 4 blocks, start, middle(x2), end
+			var blockLength = Math.floor($scope.smartPaginationNumUiElements / 4); // roughly
+			var twiceBlockLength = Math.floor($scope.smartPaginationNumUiElements / 2); // roughly
+			
+			var r = [];
+			var spacer = function(){
+				// have to create new object so angular can handle it
+				return {
+					spacer: true
+				}
+			};
+
+			if($scope.pages.length <= $scope.smartPaginationNumUiElements){
+				// trivial: can fit them all
+				r = $scope.pages;
+
+			}else{
+				// tricky...
+				var nearStart = currentPageIndex <= blockLength;
+				var nearEnd = currentPageIndex >= $scope.pages.length - blockLength;
+				if(nearStart || nearEnd){
+					// context is around start: two blocks at start, then [..], then end block.
+					// - or - 
+					// context is around end: start block, then [..], then two blocks at end
+					for(var i = 0; i < twiceBlockLength; i++){
+						r.push($scope.pages[i]);
+					}
+					r.push(spacer());
+					var remaining = $scope.smartPaginationNumUiElements - r.length;
+					for(var i = $scope.pages.length - remaining; i < $scope.pages.length; i++){
+						r.push($scope.pages[i]);
+					}
+
+				}else{
+					// context is in the middle:
+					// start block, then [..], then two middle blocks, then [..], then end block
+					var itemsAroundMiddle = (blockLength * 2) + 1 + 2;
+					var itemsAroundSides = $scope.smartPaginationNumUiElements - itemsAroundMiddle;
+					var itemsAtStart = Math.ceil(itemsAroundSides / 2);
+
+					for(var i = 0; i < itemsAtStart; i++){
+						r.push($scope.pages[i]);
+					}
+					r.push(spacer());
+					for(var i = currentPageIndex - blockLength; i <= currentPageIndex + blockLength; i++){
+						r.push($scope.pages[i]);
+					}
+					r.push(spacer());
+					var remaining = $scope.smartPaginationNumUiElements - r.length;
+					for(var i = $scope.pages.length - remaining; i < $scope.pages.length; i++){
+						r.push($scope.pages[i]);
+					}
+				}
+			}
+			$scope.smartPages = r;
 		};
 
 		$scope.goToOffset = function(offset){
@@ -297,7 +365,6 @@
 			for(var i in $scope.pages){
 				var p = $scope.pages[i];
 				if(passedNext){
-					console.log('next page: ', p);
 					$scope.goToOffset(p.offset);
 					return;
 				}
@@ -313,7 +380,6 @@
 			for(var i in $scope.pages){
 				var p = $scope.pages[i];
 				if(p.isCurrentPage){
-					console.log('prev page: ', previous);
 					$scope.goToOffset(previous.offset);
 					return;
 				}

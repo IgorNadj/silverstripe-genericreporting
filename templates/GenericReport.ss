@@ -72,9 +72,10 @@
 			<div class="page-nav">
 				<button ng-disabled="!hasPrevious" ng-click="goToPreviousPage()"> Previous </button>
 				<ol class="pages">
-					<li ng-repeat="page in pages">
-						<span ng-if="page.isCurrentPage" ng-bind="page.number"></span>
-						<a ng-if="!page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
+					<li ng-repeat="page in smartPages">
+						<span class="spacer" ng-if="page.spacer">..</span>
+						<span class="current-page" ng-if="!page.spacer && page.isCurrentPage" ng-bind="page.number"></span>
+						<a class="page-link" ng-if="!page.spacer && !page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
 					</li>
 				</ul>
 				<button ng-disabled="!hasNext" ng-click="goToNextPage()"> Next </button>
