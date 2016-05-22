@@ -36,14 +36,17 @@ class ReportRunner {
 		//
 		$dataQuery->limit($request->limit, $request->offset);
 
-
 		// Run
 		$response = new ReportResponse();
 		$response->sql = $dataQuery->sql();
 		$response->request = $request;
+
+		$list = GenericReportingDataList::create($obj);
+		/* @var $list GenericReportingDataList */
+		$list = $list->setDataQuery($dataQuery);
+		$rows = $list->getViewableRows();
 		
-		$response->rows = array();
-		foreach($dataQuery->execute() as $row){
+		foreach($rows as $row){
 			// setQueriedColumns adds more than we need, we have to filter them out
 			$rowExpectedColsOnly = array();
 			if($request->fields){
@@ -52,10 +55,11 @@ class ReportRunner {
 				}
 			}else{
 				$rowExpectedColsOnly = $row;
-			}
-			
+			}	
 			$response->rows[] = $rowExpectedColsOnly;
 		}
+
+		
 		
 		/*
 		 * Total Query
@@ -76,4 +80,28 @@ class ReportRunner {
 		return round(microtime(true) * 1000);
 	}
 	
+}
+
+class GenericReportingDataList extends DataList {
+
+	/**
+	  * @return array of row data if canView
+	  */
+	public function getViewableRows(){
+		$query = $this->dataQuery->query();
+		$rows = $query->execute();
+		$results = array();
+
+		foreach($rows as $row) {
+			$obj = $this->createDataObject($row);
+			if($obj->canView()){
+				$results[] = $row;
+			}else{
+				$results[] = array();
+			}
+		}
+
+		return $results;
+	}
+
 }
