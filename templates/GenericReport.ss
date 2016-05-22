@@ -14,7 +14,7 @@
 	<section class="request" ng-controller="Request">
 		<fieldset>
 			<label>Model</label>
-			<select ng-model="dataObject" ng-options="dataObject.className for dataObject in dataObjects"></select>
+			<select ng-model="dataObject" ng-options="dataObject.humanReadableName for dataObject in dataObjects"></select>
 		</fieldset>
 		<fieldset>
 			<label>Columns</label>

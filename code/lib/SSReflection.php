@@ -2,6 +2,15 @@
 
 class SSReflection {
 	
+	/*
+	 * Some built-in classes don't have singular_name set properly, so we have to fix it here.
+	 * TODO: raise PRs to get these added
+	 */
+	public static $missing_singular_name_map = array(
+		'Image' => 'Image',
+		'Image_Cached' => 'Image_Cached',
+	); 
+
 	/**
 	 * @return array of ReflectionClass
 	 */
@@ -13,7 +22,7 @@ class SSReflection {
 
 		foreach($manifest->getClasses() as $lowercaseClassName => $absFilePath){
 			$reflectionClass = new ReflectionClass($lowercaseClassName);
-			if($reflectionClass->isSubclassOf('DataObject')){
+			if($reflectionClass->isSubclassOf('DataObject') && !$reflectionClass->implementsInterface('TestOnly')){
 				$r[] = $reflectionClass;
 			}
 		}
@@ -43,6 +52,14 @@ class SSReflection {
 		return $r;
 	}
 	
+
+	public static function getClassSingularName($className){
+		if(isset(self::$missing_singular_name_map[$className])){
+			return self::$missing_singular_name_map[$className];
+		}
+		$obj = new $className();
+		return $obj->singular_name();
+	}
 	
 	
 }
