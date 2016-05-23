@@ -26,21 +26,7 @@
 			<pre class="filters-debug"></pre>
 		</fieldset>
 		<fieldset>
-			<label>Sort</label>
-			<select ng-model="sortBy" ng-options="field.name for field in dataObject.fields"></select>
-			<div>
-				<label>
-					<input type="radio" name="sortDesc" ng-model="sortDesc" value="1" />
-					Descending
-				</label>
-				<label>
-					<input type="radio" name="sortDesc" ng-model="sortDesc" value="0" /> 
-					Ascending
-				</label>
-			</div>
-		</fieldset>
-		<fieldset>
-			<label>Number of results</label>
+			<label>Results per page</label>
 			<input ng-model="limit" />
 		</fieldset>
 	</section>
@@ -50,7 +36,17 @@
 			<thead>
 				<tr>
 					<th ng-repeat="field in headerColumns" ng-if="response.rows.length > 0">
-						{{field.humanReadableName}}
+						<a ng-click="sortBy(field, false)" ng-if="request.sortBy != field.name">
+							{{field.humanReadableName}}
+						</a>
+						<a ng-click="sortBy(field, true)" ng-if="request.sortBy == field.name && request.sortDesc == 0">
+							{{field.humanReadableName}}
+							<span class="indicator">[^]</span>
+						</a>
+						<a ng-click="sortBy(field, false)" ng-if="request.sortBy == field.name && request.sortDesc == 1">
+							{{field.humanReadableName}}
+							<span class="indicator">[v]</span>
+						</a>
 					</th>
 				</tr>
 			</thead>

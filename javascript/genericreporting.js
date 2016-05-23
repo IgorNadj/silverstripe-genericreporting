@@ -219,6 +219,7 @@
 	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
 		reportRunner.listen(function(data){
 			$scope.request = data.request;
+			console.log($scope.request.sortBy, $scope.request.sortDesc);
 			$scope.response = data.response;
 		});
 
@@ -385,6 +386,14 @@
 				}
 				previous = p;
 			}
+		};
+
+		$scope.sortBy = function(field, desc){
+			console.log('sortBy', field, desc);
+			var updatedRequest = $scope.request;
+			updatedRequest.sortBy = field.name;
+			updatedRequest.sortDesc = desc ? 1 : 0;
+			reportRunner.run(updatedRequest);
 		};
 
 		$scope.$watch('response', $scope.updateHeaderColumns);
