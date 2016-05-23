@@ -117,7 +117,7 @@
 			for(var i in $scope.dataObject.fields){
 				var field = $scope.dataObject.fields[i];
 				var filter = {
-					id: field.name
+					id: field.definedOn+'.'+field.name
 				};
 				if(field.type == 'Int') filter.type = 'integer';
 				if(field.type == 'Varchar(255)') filter.type = 'string'; // TODO: other varchars

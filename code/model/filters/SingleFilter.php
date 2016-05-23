@@ -57,6 +57,7 @@ class SingleFilter implements IFilter {
 		}
 		if($op == 'contains'){
 			$sql = $fieldEscaped.' LIKE(?)';
+			$param = '%'.$value.'%';
 		}
 		if($op == 'not_contains'){
 			$sql = $fieldEscaped.' NOT LIKE(?)';
@@ -95,8 +96,11 @@ class SingleFilter implements IFilter {
 		
 	}
 	
-	protected function escapeColumnName($col){
-		return '"'.$col.'"'; // FIXME: do better, massive security hole
+	protected function escapeColumnName($tableAndCol){
+		$parts = explode('.', $tableAndCol);
+		$table = $parts[0];
+		$col = $parts[1];
+		return '"'.$table.'"."'.$col.'"'; // FIXME: do better, this is a massive security hole
 	}
 	
 }

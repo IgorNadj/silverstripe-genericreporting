@@ -38,7 +38,7 @@ class SSReflection {
 	 * returns $db of a DataObject, including inherited
 	 * @return array of array('name' => string, 'type' => string);
 	 */
-	public static function getDataObjectFields($className){
+	public static function getDataObjectFields($className, $childClassName = null){
 		$r = array();
 
 		// First we manually add in the base-level fields
@@ -47,6 +47,7 @@ class SSReflection {
 				'name' => $name,
 				'type' => $spec,
 				'humanReadableName' => $name, // TODO
+				'definedOn' => $className,
 			);
 		}
 
@@ -57,39 +58,22 @@ class SSReflection {
 					'name' => 'ID', 
 					'humanReadableName' => 'ID', 
 					'type' => 'Int',
+					'definedOn' => $childClassName, // e.g. SiteTree has ID, not DataObject
 				),
 				array(
 					'name' => 'RecordClassName', 
 					'humanReadableName' => 'Record Class Name', 
 					'type' => 'Varchar(255)',
+					'definedOn' => $childClassName, // e.g. SiteTree has ID, not DataObject
 				),
 			);
 			$r = array_merge($always, $r);
 		}else{
 			$reflectionClass = new ReflectionClass($className);
 			$parentClassName = $reflectionClass->getParentClass()->getName();
-			$r = array_merge($r, self::getDataObjectFields($parentClassName));
+			$r = array_merge($r, self::getDataObjectFields($parentClassName, $className));
 		}
 
-		
-		// $instance = new $className();
-		// /* @var $instance DataObject */
-		
-		// // pre-fetch labels (human readable names) for performance
-		// $fieldLabelsMap = $instance->fieldLabels();
-
-		// // get all fields
-		// $allFields = $instance->db();
-
-		// // build field spec
-		// foreach($allFields as $k => $v){
-		// 	$r[] = array(
-		// 		'name' => $k, 
-		// 		'humanReadableName' => $fieldLabelsMap[$k],
-		// 		'type' => $v,
-		// 	);
-		// }
-		
 		return $r;
 	}
 	
