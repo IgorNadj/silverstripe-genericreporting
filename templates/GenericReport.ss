@@ -8,6 +8,9 @@
 	td, th { border: 1px solid #aaa; padding: 0.5em 1em; }
 	table { border-collapse: collapse; }
 	th { font-weight: bold; background: rgba(0,0,0,0.1); }
+
+	.filter { border: 1px solid #aaa; padding: 0.5em; }
+	.child-filters { margin-left: 2em; }
 </style>
 
 <main ng-app="GenericReportingApp">
@@ -22,6 +25,10 @@
 		</fieldset>
 		<fieldset>
 			<label>Filters</label>
+			<composite-filter filter-fields="dataObject.fields"></filter>
+		</fieldset>
+		<fieldset>
+			<label>Filters (old)</label>
 			<div class="filters-builder"></div>
 			<pre class="filters-debug"></pre>
 		</fieldset>
