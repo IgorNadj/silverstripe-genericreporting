@@ -126,6 +126,7 @@
 				if(field.type == 'Varchar(255)') filter.type = 'string'; // TODO: other varchars
 				if(field.type == 'SS_Datetime') filter.type = 'datetime';
 				if(field.type == 'Text') filter.type = 'string';
+				if(field.type == 'ForeignKey') filter.type = 'integer'; // TODO: use select type
 				if(field.type == 'Boolean(1)'){
 					// TODO: other bools
 					filter.type = 'integer';
@@ -135,13 +136,13 @@
 						0: 'No'
 					}
 				}
+				if(!filter.type) filter.type = 'string';
 				filters.push(filter);
 			}
 			
-			$('.filters-builder').queryBuilder({
-				filters: filters
-			});
 			console.log('filtersBuilder filters set to:', filters);
+			if(_isFiltersInit) $('.filters-builder').queryBuilder('destroy');
+			$('.filters-builder').queryBuilder({ filters: filters });
 			_isFiltersInit = true;
 			_onFiltersChanged();
 		};
@@ -220,81 +221,6 @@
 		});
 		
 	}])
-	.directive('compositeFilter', function(){
-		var filterDirectiveCounter = 0;
-		return {
-			restrict: 'E',
-			templateUrl: '/genericreporting/templates/composite-filter-template.html',
-			scope: {
-				'filterFields': '='
-			},
-			link: function(scope, element, attrs){
-				scope.directiveCount = filterDirectiveCounter;
-				filterDirectiveCounter++;
-
-				scope.joinType = 'and';
-
-				scope.childFilters = [{
-					type: 'single'
-				}];
-
-				scope.addSingleFilter = function(){
-					scope.childFilters.push({
-						type: 'single'
-					});
-				};
-
-				scope.addCompositeFilter = function(){
-					scope.childFilters.push({
-						type: 'composite'
-					});
-				};
-
-				scope.deleteFilter = function(filter){
-					for(var i in scope.childFilters){
-						var f = scope.childFilters[i];
-						if(f === filter){
-							scope.childFilters.splice(i, 1);
-							break;
-						}
-					}
-				};
-
-			}
-		};
-	})
-	.directive('singleFilter', function(){
-		var filterDirectiveCounter = 0;
-		return {
-			restrict: 'E',
-			templateUrl: '/genericreporting/templates/single-filter-template.html',
-			scope: {
-				'filterFields': '='
-			},
-			link: function(scope, element, attrs){
-				scope.directiveCount = filterDirectiveCounter;
-				filterDirectiveCounter++;
-
-				scope.operators = [
-					{ name: 'equals' },
-					{ name: 'not equals' },
-					{ name: 'in' },
-					{ name: 'not in' },
-					{ name: 'begins with' },
-					{ name: 'doesn\'t begin with' },
-					{ name: 'contains' },
-					{ name: 'doesn\'t contain' },
-					{ name: 'ends with' },
-					{ name: 'doesn\'t end with' },
-					{ name: 'is empty' },
-					{ name: 'is not empty' },
-					{ name: 'is null' },
-					{ name: 'is not null' }
-				];
-			}
-		};
-	})
-
 	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
 		reportRunner.listen(function(data){
 			$scope.request = data.request;
