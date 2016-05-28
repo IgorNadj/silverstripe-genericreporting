@@ -1,15 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.2/angular.min.js"></script>
-<script src="/framework/thirdparty/jquery/jquery.js"></script>
-<script src="/genericreporting/javascript/query-builder.standalone.min.js"></script>
-<script src="/genericreporting/javascript/genericreporting.js"></script>
-
-<style>
-	label { display: block; padding: 1em; }
-	td, th { border: 1px solid #aaa; padding: 0.5em 1em; }
-	table { border-collapse: collapse; }
-	th { font-weight: bold; background: rgba(0,0,0,0.1); }
-</style>
-
 <main ng-app="GenericReportingApp">
 	<section class="request" ng-controller="Request">
 		<fieldset>

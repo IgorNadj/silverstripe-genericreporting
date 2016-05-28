@@ -1,4 +1,5 @@
-(function () {
+(function($){
+
 	angular
 	.module('GenericReportingApp', [])
 	.factory('api', ['$http', function($http){
@@ -420,4 +421,5 @@
 		};
 		
 	}]);
-})();
+
+})(jQuery);
