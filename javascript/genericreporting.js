@@ -141,9 +141,11 @@
 			}
 			
 			console.log('filtersBuilder filters set to:', filters);
-			if(_isFiltersInit) $('.filters-builder').queryBuilder('destroy');
-			$('.filters-builder').queryBuilder({ filters: filters });
-			_isFiltersInit = true;
+			if(!_isFiltersInit){
+				$('.filters-builder').queryBuilder({ filters: filters });
+				_isFiltersInit = true;
+			}
+			$('.filters-builder').queryBuilder('setFilters', true, filters);
 			_onFiltersChanged();
 		};
 		
