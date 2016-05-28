@@ -127,9 +127,9 @@
 				if(field.type == 'SS_Datetime') filter.type = 'datetime';
 				if(field.type == 'Text') filter.type = 'string';
 				if(field.type == 'ForeignKey') filter.type = 'integer'; // TODO: use select type
-				if(field.type == 'Boolean(1)'){
+				if(field.type == 'Boolean'){
 					// TODO: other bools
-					filter.type = 'integer';
+					filter.type = 'boolean';
 					filter.input = 'radio';
 					filter.values = {
 						1: 'Yes',
