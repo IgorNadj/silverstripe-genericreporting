@@ -420,6 +420,11 @@
 			api.save();
 		};
 		
-	}]);
+	}])
+	.directive('pagination', function(){
+		return {
+			templateUrl: '/genericreporting/templates/angular/pagination.html'
+		};
+	});
 
 })(jQuery);

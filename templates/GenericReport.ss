@@ -1,3 +1,15 @@
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.2/angular.min.js"></script>
+<script src="/framework/thirdparty/jquery/jquery.js"></script>
+<script src="/genericreporting/javascript/query-builder.standalone.min.js"></script>
+<script src="/genericreporting/javascript/genericreporting.js"></script>
+
+<style>
+	label { display: block; padding: 1em; }
+	td, th { border: 1px solid #aaa; padding: 0.5em 1em; }
+	table { border-collapse: collapse; }
+	th { font-weight: bold; background: rgba(0,0,0,0.1); }
+</style>
+
 <main ng-app="GenericReportingApp">
 	<section class="request" ng-controller="Request">
 		<fieldset>
@@ -20,7 +32,6 @@
 	</section>
 	<hr/>
 	<section class="response" ng-controller="Response">
-		<pagination></pagination>
 		<table>
 			<thead>
 				<tr>
@@ -47,7 +58,25 @@
 				</tr>
 			</tbody>
 		</table>
-		<pagination></pagination>
+		<div class="pagination">
+			<div class="page-info">
+				Showing rows <span ng-bind="firstRowNumber"></span> to 
+				<span ng-bind="lastRowNumber"></span> of 
+				<span ng-bind="response.totalNumRows"></span>
+			</div>
+
+			<div class="page-nav">
+				<button ng-disabled="!hasPrevious" ng-click="goToPreviousPage()"> Previous </button>
+				<ol class="pages">
+					<li ng-repeat="page in smartPages">
+						<span class="spacer" ng-if="page.spacer">..</span>
+						<span class="current-page" ng-if="!page.spacer && page.isCurrentPage" ng-bind="page.number"></span>
+						<a class="page-link" ng-if="!page.spacer && !page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
+					</li>
+				</ul>
+				<button ng-disabled="!hasNext" ng-click="goToNextPage()"> Next </button>
+			</div>
+		</div>
 	
 		<div class="time-taken">
 			Took {{response.timeTakenMs/1000}} seconds 
