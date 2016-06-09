@@ -2,3 +2,4 @@ label { display: block; padding: 1em; }
 td, th { border: 1px solid #aaa; padding: 0.5em 1em; }
 table { border-collapse: collapse; }
 th { font-weight: bold; background: rgba(0,0,0,0.1); }
+

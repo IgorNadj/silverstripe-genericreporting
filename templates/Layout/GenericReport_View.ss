@@ -1,10 +1,13 @@
-<div class="cms-content">
+<div class="cms-content center" data-layout-type="border">
 
-	<div class="cms-content-header north" style="width:100%;">
+	<div class="cms-content-header north" data-layout-type="border">
 		<div class="cms-content-header-info">
 			<% include CMSBreadcrumbs %>
 		</div>
 	</div>
 
-	<% include GenericReportApp %>
+	<div class="cms-content-fields center cms-panel-padded" data-layout-type="border">
+		<% include GenericReportApp %>
+	</div>
+	
 </div>
