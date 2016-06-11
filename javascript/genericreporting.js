@@ -355,7 +355,7 @@
 			}else{
 				// tricky...
 				var nearStart = currentPageIndex <= blockLength;
-				var nearEnd = currentPageIndex >= $scope.pages.length - blockLength;
+				var nearEnd = currentPageIndex >= $scope.pages.length - blockLength - 1;
 				if(nearStart || nearEnd){
 					// context is around start: two blocks at start, then [..], then end block.
 					// - or - 
