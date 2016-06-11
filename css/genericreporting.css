@@ -3,3 +3,42 @@ td, th { border: 1px solid #aaa; padding: 0.5em 1em; }
 table { border-collapse: collapse; }
 th { font-weight: bold; background: rgba(0,0,0,0.1); }
 
+main {
+	padding: 1em 0;
+}
+
+.view-mode.summary {
+	font-size: 1.1em;
+	line-height: 1.5em;
+	padding: 1em 0;
+}
+
+.view-model-name {
+	display: block;
+	font-size: 1.1em;
+    line-height: 2em;
+}
+
+view-group .condition {
+	font-weight: bold;
+	color: #72A1D4;
+	margin: 0 0.3em;
+	text-transform: lowercase;
+}
+
+view-group .group-wrapper {
+	font-weight: bold;
+	color: #72A1D4;
+}
+
+.view-filters-header {
+	font-weight: bold;
+	text-transform: lowercase;
+	color: #72A1D4;
+	margin: 0 0.3em;
+}
+
+.view-mode-buttons {
+	margin-top: 2em;
+
+}

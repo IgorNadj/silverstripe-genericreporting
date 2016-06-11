@@ -68,7 +68,7 @@
 			}
 		}
 	}])
-	.controller('Request', ['$scope', 'api', 'reportRunner', function($scope, api, reportRunner){
+	.controller('Request', ['$scope', '$timeout', 'api', 'reportRunner', function($scope, $timeout, api, reportRunner){
 		var _isFiltersInit = false;
 		
 		$scope.report = {
@@ -92,6 +92,13 @@
 		$scope.dataObjects = null;
 
 		$scope.defaultDataObject = 'Page';
+
+		$scope.mode = 'view';
+
+		$scope.hasFilters = false;
+
+
+		initFiltersBuilder();
 
 		// TODO: use summary_fields as default columns
 		
@@ -217,11 +224,36 @@
 		
 		$scope.$watch('dataObject', $scope.updateFiltersBuilder);
 		
-		$('.filters-builder').change(function(){
-			$scope.$apply(function(){
-				_onFiltersChanged();
-			});
+		$scope.$watch('filters', function(){
+			$scope.hasFilters = false;
+			if($scope.filters && $scope.filters.condition) $scope.hasFilters = true;
 		});
+
+
+		function initFiltersBuilder(){
+			var events = [
+				'afterAddGroup',
+				'afterDeleteGroup',
+				'afterAddRule',
+				'afterDeleteRule',
+				'afterUpdateRuleValue',
+				'afterUpdateRuleFilter',
+				'afterUpdateRuleOperator',
+				'afterUpdateGroupCondition'
+			];
+			var eventStr = '';
+			for(var i in events){
+				var event = events[i] + '.queryBuilder';
+				eventStr += event + ' ';
+			}
+			$('.filters-builder').on(eventStr+' change', function(){
+				$timeout(function(){
+					$scope.$apply(function(){
+						_onFiltersChanged();
+					});
+				}, 0);		
+			});
+		}
 		
 	}])
 	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
@@ -424,6 +456,23 @@
 	.directive('pagination', function(){
 		return {
 			templateUrl: '/genericreporting/templates/angular/pagination.html'
+		};
+	})
+	.directive('viewGroup', function(){
+		return {
+			scope: {
+				filters: '=',
+				isRoot: '='
+			},
+			templateUrl: '/genericreporting/templates/angular/view-group.html'
+		};
+	})
+	.directive('viewRule', function(){
+		return {
+			scope: {
+				filters: '='
+			},
+			templateUrl: '/genericreporting/templates/angular/view-rule.html'
 		};
 	});
 

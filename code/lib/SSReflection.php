@@ -11,6 +11,14 @@ class SSReflection {
 		'Image_Cached' => 'Image_Cached',
 	); 
 
+	/*
+	 * See $missing_singular_name_map
+	 */
+	public static $missing_plural_name_map = array(
+		'Image' => 'Images',
+		'Image_Cached' => 'Image_Cached',
+	); 
+
 
 
 
@@ -43,10 +51,11 @@ class SSReflection {
 
 		// First we manually add in the base-level fields
 		foreach(DataObject::database_fields($className) as $name => $spec){
+			$humanReadableName = $name; // TODO
 			$r[] = array(
 				'name' => $name,
 				'type' => $spec,
-				'humanReadableName' => $name, // TODO
+				'humanReadableName' => $humanReadableName,
 				'definedOn' => $className,
 			);
 		}
@@ -85,5 +94,15 @@ class SSReflection {
 		$obj = new $className();
 		return $obj->singular_name();
 	}
+
+
+	public static function getClassPluralName($className){
+		if(isset(self::$missing_plural_name_map[$className])){
+			return self::$missing_plural_name_map[$className];
+		}
+		$obj = new $className();
+		return $obj->plural_name();
+	}
+
 	
 }

@@ -45,9 +45,11 @@ class GenericReportingAdmin extends LeftAndMain {
 
 		Requirements::javascript('framework/thirdparty/jquery/jquery.js');
 		Requirements::javascript('genericreporting/javascript/angular.js');
-		Requirements::javascript('genericreporting/javascript/query-builder.standalone.min.js');
 		Requirements::javascript('genericreporting/javascript/genericreporting.js');
 		Requirements::css('genericreporting/css/genericreporting.css');
+
+		Requirements::javascript('genericreporting/vendor/query-builder.standalone.min.js');
+		Requirements::css('genericreporting/vendor/query-builder.default.min.css');
 	}
 
 	public function newReport(){
