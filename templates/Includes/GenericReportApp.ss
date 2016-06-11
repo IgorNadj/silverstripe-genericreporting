@@ -1,4 +1,4 @@
-<main ng-app="GenericReportingApp">
+<main ng-app="GenericReportingApp" class="genericreporting">
 	<section class="request" ng-controller="Request">
 		<div ng-show="mode == 'view'" class="view-mode summary">
 			<span class="view-model-name">{{dataObject.humanReadableNamePlural}}</span>
@@ -30,7 +30,7 @@
 				<label>Results per page</label>
 				<input ng-model="limit" />
 			</fieldset>
-			<button ng-click="mode = 'view'">View</button>
+			<button ng-click="mode = 'view'">Done</button>
 		</div>
 	</section>
 	<hr/>
@@ -47,11 +47,11 @@
 						</a>
 						<a ng-click="sortBy(field, true)" ng-if="request.sortBy == field.name && request.sortDesc == 0">
 							{{field.humanReadableName}}
-							<span class="indicator">[^]</span>
+							<span class="indicator">↑</span>
 						</a>
 						<a ng-click="sortBy(field, false)" ng-if="request.sortBy == field.name && request.sortDesc == 1">
 							{{field.humanReadableName}}
-							<span class="indicator">[v]</span>
+							<span class="indicator">↓</span>
 						</a>
 					</th>
 				</tr>

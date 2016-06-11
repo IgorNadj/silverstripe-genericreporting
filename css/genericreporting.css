@@ -1,11 +1,35 @@
-label { display: block; padding: 1em; }
-td, th { border: 1px solid #aaa; padding: 0.5em 1em; }
-table { border-collapse: collapse; }
-th { font-weight: bold; background: rgba(0,0,0,0.1); }
+.genericreporting label { display: block; padding: 1em; }
+.genericreporting td, th { border: 1px solid rgba(0,0,0,0.1); }
+.genericreporting table { border-collapse: collapse; }
+.genericreporting td {
+	padding: 0.5em 1em;
+}
+.genericreporting th { 
+	font-weight: bold; 
+	background: #C2D6E4;
+	white-space: nowrap;
+}
+.genericreporting th a {
+	padding: 1.2em 1em;
+	display: inline-block;
+	color: #444A50;
+	cursor: pointer;
+}
+.genericreporting tr {
+	background: white;
+}
+.genericreporting tr:nth-child(2n) {
+	background: #F0F4F7;
+}
 
-main {
+
+
+.genericreporting {
 	padding: 1em 0;
 }
+
+
+
 
 .view-mode.summary {
 	font-size: 1.1em;
@@ -30,6 +54,14 @@ view-group .group-wrapper {
 	font-weight: bold;
 	color: #72A1D4;
 }
+
+view-group .rule-value:before,
+view-group .rule-value:after {
+	content: '"';
+	margin: 0 0.1em;
+	color: #A29F9F;
+}
+
 
 .view-filters-header {
 	font-weight: bold;
