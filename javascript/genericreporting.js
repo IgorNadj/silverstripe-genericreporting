@@ -259,7 +259,6 @@
 	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
 		reportRunner.listen(function(data){
 			$scope.request = data.request;
-			console.log($scope.request.sortBy, $scope.request.sortDesc);
 			$scope.response = data.response;
 		});
 
