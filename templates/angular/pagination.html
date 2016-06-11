@@ -6,14 +6,18 @@
 	</div>
 
 	<div class="page-nav">
-		<button ng-disabled="!hasPrevious" ng-click="goToPreviousPage()"> Previous </button>
+		<span ng-if="!hasPrevious" class="item">❮</span>
+		<a ng-if="hasPrevious" ng-click="goToPreviousPage()" class="item actionable">❮</a>
+
 		<ol class="pages">
 			<li ng-repeat="page in smartPages">
-				<span class="spacer" ng-if="page.spacer">..</span>
-				<span class="current-page" ng-if="!page.spacer && page.isCurrentPage" ng-bind="page.number"></span>
-				<a class="page-link" ng-if="!page.spacer && !page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
+				<span class="item spacer" ng-if="page.spacer">..</span>
+				<span class="item page current-page" ng-if="!page.spacer && page.isCurrentPage" ng-bind="page.number"></span>
+				<a class="item page page-link actionable" ng-if="!page.spacer && !page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
 			</li>
 		</ul>
-		<button ng-disabled="!hasNext" ng-click="goToNextPage()"> Next </button>
+		
+		<span ng-if="!hasNext" class="item">❯</span>
+		<a ng-if="hasNext" ng-click="goToNextPage()" class="item actionable">❯</a>
 	</div>
 </div>

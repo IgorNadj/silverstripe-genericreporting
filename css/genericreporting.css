@@ -16,7 +16,7 @@ main {
 .view-model-name {
 	display: block;
 	font-size: 1.1em;
-    line-height: 2em;
+	line-height: 2em;
 }
 
 view-group .condition {
@@ -42,3 +42,49 @@ view-group .group-wrapper {
 	margin-top: 2em;
 
 }
+
+
+
+.pagination {
+	margin: 0.5em 0;
+	text-align: right;
+}
+.pagination-wrapper.top .page-info {
+	display: none; 
+}
+
+/* reset */
+.pagination .page-nav ol {
+	display: inline-block;
+}
+.pagination .page-nav a {
+	text-decoration: none;
+}
+
+/* same size items */
+.pagination .page-nav .item,
+.pagination .page-nav li {
+	display: inline-block;
+	padding: 0;
+	width: 3em;
+	height: 2.5em;
+	text-align: center;
+	background: none;
+	border: 0;
+	line-height: 2.5em;
+	color: #aaa;
+}
+.pagination .page-nav .actionable {
+	color: #4f5861; /* same as rest of page black */
+	cursor: pointer;
+}
+.pagination .page-nav .current-page {
+	background: #DCDFE0;
+}
+.pagination .page-nav .actionable:hover {
+	background: #72A1D4;
+}
+
+
+
+

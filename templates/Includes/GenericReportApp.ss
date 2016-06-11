@@ -35,7 +35,9 @@
 	</section>
 	<hr/>
 	<section class="response" ng-controller="Response">
-		<pagination></pagination>
+		<div class="pagination-wrapper top">
+			<pagination></pagination>
+		</div>
 		<table>
 			<thead>
 				<tr>
@@ -62,7 +64,10 @@
 				</tr>
 			</tbody>
 		</table>
-		<pagination></pagination>
+		<div class="pagination-wrapper bottom">
+			<pagination></pagination>
+		</div>
+		
 	
 		<div class="time-taken">
 			Took {{response.timeTakenMs/1000}} seconds 
