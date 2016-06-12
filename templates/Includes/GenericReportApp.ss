@@ -13,25 +13,31 @@
 			</div>
 		</div>
 		<div ng-show="mode == 'edit'" class="edit-mode form">
-			<fieldset>
+			<fieldset class="model">
 				<h3>Model</h3>
-				<select ng-model="dataObject" ng-options="dataObject.humanReadableName for dataObject in dataObjects"></select>
-			</fieldset>
-			<fieldset>
-				<h3>Filters</h3>
-				<div class="filters-builder"></div>
-			</fieldset>
-			<fieldset>
-				<h3>Columns</h3>
-				<div class="columns-set">
-					<label ng-repeat="field in dataObject.fields" class="column-checkbox">
-						<input type="checkbox" ng-checked="columns[field.name]" ng-click="toggleColumnSelected(field.name)" />
-						<span>{{field.humanReadableName}}</span>
-					</label>
+				<div class="fieldset-contents">
+					<select ng-model="dataObject" ng-options="dataObject.humanReadableName for dataObject in dataObjects"></select>
 				</div>
-				<div class="columns-set-meta">
-					<button ng-click="toggleAllColumnsSelected()">Select All</button>
-					<button ng-click="selectDefaultColumns()">Select Default Columns</button>
+			</fieldset>
+			<fieldset class="filters">
+				<h3>Filters</h3>
+				<div class="fieldset-contents">
+					<div class="filters-builder"></div>
+				</div>
+			</fieldset>
+			<fieldset class="columns">
+				<h3>Columns</h3>
+				<div class="fieldset-contents">
+					<div class="columns-set">
+						<label ng-repeat="field in dataObject.fields" class="column-checkbox">
+							<input type="checkbox" ng-checked="columns[field.name]" ng-click="toggleColumnSelected(field.name)" />
+							<span>{{field.humanReadableName}}</span>
+						</label>
+					</div>
+					<div class="columns-set-meta">
+						<a ng-click="toggleAllColumnsSelected()">Select All</a>
+						<a ng-click="selectDefaultColumns()">Select Default Columns</a>
+					</div>
 				</div>
 			</fieldset>
 			<fieldset>

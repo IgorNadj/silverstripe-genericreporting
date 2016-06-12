@@ -332,6 +332,7 @@
 
 		$scope.updateHeaderColumns = function(){
 			if(!$scope.response) return;
+			if(!$scope.response.rows) return;
 			if($scope.response.rows.length == 0) return;
 			// look up DataObject fields by first response row
 			var r = [];

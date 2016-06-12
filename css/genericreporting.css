@@ -26,12 +26,31 @@
 	background: #F0F4F7;
 }
 
+.genericreporting fieldset {
+	margin-bottom: 2em;
+}
+
 
 
 .genericreporting {
 	padding: 1em 0;
 }
 
+.genericreporting h3 {
+	margin: 0.5em;
+}
+
+
+
+.fieldset-contents {
+	background: white;
+	padding: 0.5em 0.5em;
+	border: rgba(0,0,0,1);
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+}
+.model .fieldset-contents {
+	display: inline-block;
+}
 
 
 
@@ -123,10 +142,20 @@ view-group .rule-value:after {
 
 
 .columns-set {
-	background: white;
+	padding: 0.5em 0;
 }
-.column-checkbox {
+.columns-set .column-checkbox {
 	display: inline-block;
 	padding: 0.3em 0.5em;
+}
+.columns-set-meta {
+	padding: 0 0.2em 0.5em 0.2em;
+}
+.columns-set-meta a {
+	font-weight: bold;
+	cursor: pointer;
+	color: #4f5861; /* same as rest of page black */
+	padding: 0.3em 0.5em;
+	display: inline-block;
 }
 
