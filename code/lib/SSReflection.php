@@ -56,7 +56,8 @@ class SSReflection {
 				'name' => $name,
 				'type' => $spec,
 				'humanReadableName' => $humanReadableName,
-				'definedOn' => $className,
+				'definedOnTable' => $childClassName,
+				'definedOnClass' => $childClassName, 
 			);
 		}
 
@@ -67,13 +68,15 @@ class SSReflection {
 					'name' => 'ID', 
 					'humanReadableName' => 'ID', 
 					'type' => 'Int',
-					'definedOn' => $childClassName, // e.g. SiteTree has ID, not DataObject
+					'definedOnTable' => $childClassName, // e.g. SiteTree has ID, not DataObject
+					'definedOnClass' => $className,
 				),
 				array(
 					'name' => 'RecordClassName', 
 					'humanReadableName' => 'Record Class Name', 
 					'type' => 'Varchar(255)',
-					'definedOn' => $childClassName, // e.g. SiteTree has ID, not DataObject
+					'definedOnTable' => $childClassName, // e.g. SiteTree has ID, not DataObject
+					'definedOnClass' => $className,
 				),
 			);
 			$r = array_merge($always, $r);

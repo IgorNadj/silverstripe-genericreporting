@@ -79,10 +79,16 @@
 			sort: null
 		};
 
-		window.req = $scope;
+		$scope.defaultDataObject = 'Page';
+		$scope.defaultColumns = {
+			'ID': true,
+			'Title': true,
+			'LastEdited': true
+		};
+
 		
 		$scope.dataObject = null;
-		$scope.columns = {};
+		$scope.columns = JSON.parse(JSON.stringify($scope.defaultColumns));
 		$scope.filters = null;
 
 		$scope.sortDesc = 1;
@@ -91,12 +97,12 @@
 		
 		$scope.dataObjects = null;
 
-		$scope.defaultDataObject = 'Page';
+
 
 		$scope.mode = 'view';
 
 		$scope.hasFilters = false;
-
+		
 
 		initFiltersBuilder();
 
@@ -127,7 +133,7 @@
 			for(var i in $scope.dataObject.fields){
 				var field = $scope.dataObject.fields[i];
 				var filter = {
-					id: field.definedOn+'.'+field.name
+					id: field.definedOnTable+'.'+field.name
 				};
 				if(field.type == 'Int') filter.type = 'integer';
 				if(field.type == 'Varchar(255)') filter.type = 'string'; // TODO: other varchars
@@ -185,6 +191,11 @@
 				return r;
 			}
 		};
+
+		$scope.updateHasFilters = function(){
+			$scope.hasFilters = false;
+			if($scope.filters && $scope.filters.condition) $scope.hasFilters = true;
+		};
 		
 		$scope.updateReport = function(){
 			if($scope.dataObject){
@@ -225,23 +236,63 @@
 			}else{
 				$scope.columns[columnName] = true;
 			}
-			// TODO: why is $watch not picking this up?
-			$scope.updateAndRunReport();
 		};
 
-		
+		$scope.toggleAllColumnsSelected = function(){
+			var selectedCols = Object.keys($scope.columns);
+			if(selectedCols.length == Object.keys($scope.dataObject.fields).length){
+				// all selected, select none
+				$scope.columns = {};
+			}else{
+				// select all
+				for(var i in $scope.dataObject.fields){
+					var field = $scope.dataObject.fields[i];
+					$scope.columns[field.name] = true;
+				}
+			}
+		};
+
+		$scope.selectDefaultColumns = function(){
+			$scope.columns = JSON.parse(JSON.stringify($scope.defaultColumns));
+			$scope.selectOnlyExistingColumns();
+		};
+
+		$scope.selectOnlyExistingColumns = function(){
+			// unselect columns that don't exist on this data object
+			if(!$scope.dataObject) return;
+			var filteredColumns = {};
+			for(var col in $scope.columns){
+				for(var i in $scope.dataObject.fields){
+					var field = $scope.dataObject.fields[i];
+					if(field.name == col){
+						filteredColumns[col] = true;
+						break;
+					}
+				}
+			}
+			$scope.columns = filteredColumns;
+		};
+
 
 		
+		/*
+		 * Watch expressions
+		 */
 		
-		$scope.$watchGroup(['dataObject', 'columns', 'filters', 'sortBy', 'sortDesc', 'limit'], $scope.updateAndRunReport);
-
+		
+		$scope.$watchGroup(['dataObject','filters', 'sortBy', 'sortDesc', 'limit'], $scope.updateAndRunReport);
+		$scope.$watchCollection('columns', $scope.updateAndRunReport);
 		$scope.$watch('dataObject', $scope.updateFiltersBuilder);
-		
-		$scope.$watch('filters', function(){
-			$scope.hasFilters = false;
-			if($scope.filters && $scope.filters.condition) $scope.hasFilters = true;
-		});
 
+		$scope.$watch('dataObject', $scope.selectOnlyExistingColumns);
+
+		$scope.$watch('filters', $scope.updateHasFilters);
+		
+
+
+		/*
+		 * Init
+		 */
 
 		function initFiltersBuilder(){
 			var events = [

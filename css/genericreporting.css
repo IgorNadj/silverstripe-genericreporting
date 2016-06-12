@@ -1,6 +1,10 @@
-.genericreporting label { display: block; padding: 1em; }
-.genericreporting td, th { border: 1px solid rgba(0,0,0,0.1); }
-.genericreporting table { border-collapse: collapse; }
+.genericreporting td, th { 
+	border: 1px solid rgba(0,0,0,0.1);
+}
+.genericreporting table { 
+	min-width: 100%;
+	border-collapse: collapse; 
+}
 .genericreporting td {
 	padding: 0.5em 1em;
 }
@@ -118,5 +122,11 @@ view-group .rule-value:after {
 }
 
 
-
+.columns-set {
+	background: white;
+}
+.column-checkbox {
+	display: inline-block;
+	padding: 0.3em 0.5em;
+}
 
