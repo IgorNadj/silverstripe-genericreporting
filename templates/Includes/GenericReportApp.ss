@@ -20,7 +20,6 @@
 			<fieldset>
 				<label>Filters</label>
 				<div class="filters-builder"></div>
-				<pre class="filters-debug"></pre>
 			</fieldset>
 			<fieldset>
 				<label>Columns</label>
@@ -72,10 +71,6 @@
 		<div class="time-taken">
 			Took {{response.timeTakenMs/1000}} seconds 
 		</div>
-
-		<pre>{{response.sql}}</pre>
-
-
 	
 	</section>
 	<hr/>

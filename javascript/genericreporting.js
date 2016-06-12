@@ -103,7 +103,7 @@
 		// TODO: use summary_fields as default columns
 		
 		api.getDataObjects().then(function(apiResp){
-			console.log('getDataObjects: ', apiResp);
+			debug('DataObjects: ', apiResp);
 			$scope.dataObjects = apiResp.data;
 			// default
 			var firstDataObject = null;
@@ -122,7 +122,6 @@
 		});
 		
 		$scope.updateFiltersBuilder = function(){
-			console.log('updateFiltersBuilder', $scope.dataObject);
 			if(!$scope.dataObject) return;
 			var filters = [];
 			for(var i in $scope.dataObject.fields){
@@ -148,7 +147,6 @@
 				filters.push(filter);
 			}
 			
-			console.log('filtersBuilder filters set to:', filters);
 			if(!_isFiltersInit){
 				$('.filters-builder').queryBuilder({ filters: filters });
 				_isFiltersInit = true;
@@ -165,8 +163,7 @@
 			var rules = $('.filters-builder').queryBuilder('getRules');
 			$scope.filters = rules;
 			
-			// debug
-			$('.filters-debug').text(JSON.stringify(rules, null, ' '));
+			debug('rules:', rules);
 		};
 		
 		
@@ -260,6 +257,8 @@
 		reportRunner.listen(function(data){
 			$scope.request = data.request;
 			$scope.response = data.response;
+
+			debug('response: ', data.response);
 		});
 
 		$scope.smartPaginationNumUiElements = 7;
@@ -428,7 +427,6 @@
 		};
 
 		$scope.sortBy = function(field, desc){
-			console.log('sortBy', field, desc);
 			var updatedRequest = $scope.request;
 			updatedRequest.sortBy = field.name;
 			updatedRequest.sortDesc = desc ? 1 : 0;
@@ -474,5 +472,11 @@
 			templateUrl: '/genericreporting/templates/angular/view-rule.html'
 		};
 	});
+
+	function debug(){
+		if(window.genericReportingDebug){
+			console.log.apply(console, arguments);
+		}
+	};
 
 })(jQuery);
