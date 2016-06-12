@@ -23,7 +23,12 @@
 			</fieldset>
 			<fieldset>
 				<label>Columns</label>
-				<select multiple="multiple" ng-model="fields" ng-options="field.humanReadableName for field in dataObject.fields"></select>
+				<div class="columns-set">
+					<label ng-repeat="field in dataObject.fields">
+						<input type="checkbox" ng-checked="columns[field.name]" ng-click="toggleColumnSelected(field.name)" />
+						<span>{{field.humanReadableName}}</span>
+					</label>
+				</div>
 			</fieldset>
 			<fieldset>
 				<label>Results per page</label>

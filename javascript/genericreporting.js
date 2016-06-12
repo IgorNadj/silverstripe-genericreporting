@@ -82,7 +82,7 @@
 		window.req = $scope;
 		
 		$scope.dataObject = null;
-		$scope.fields = null;
+		$scope.columns = {};
 		$scope.filters = null;
 
 		$scope.sortDesc = 1;
@@ -166,11 +166,6 @@
 			debug('rules:', rules);
 		};
 		
-		
-		$scope.runReport = function(){
-			reportRunner.run($scope.report);
-		};
-		
 		$scope.buildFilters = function(node){
 			if(node.field){
 				return {
@@ -196,9 +191,11 @@
 				$scope.report.dataObject = $scope.dataObject;
 			}	
 			$scope.report.selectedFields = [];
-			if($scope.fields){
-				for(var i in $scope.fields){
-					$scope.report.selectedFields.push($scope.fields[i].name);
+			if($scope.columns){
+				var colNames = Object.keys($scope.columns);
+				for(var i in colNames){
+					var colName = colNames[i];
+					$scope.report.selectedFields.push(colName);
 				}
 			}
 			if($scope.filters){
@@ -212,13 +209,32 @@
 			$scope.report.limit = $scope.limit;
 			$scope.report.offset = $scope.offset;
 		};
-		
-		
-		$scope.$watchGroup(['dataObject', 'fields', 'filters', 'sortBy', 'sortDesc', 'limit'], function(){
+
+		$scope.runReport = function(){
+			reportRunner.run($scope.report);
+		};
+
+		$scope.updateAndRunReport = function(){
 			$scope.updateReport();
 			$scope.runReport();
-		});
+		};
+
+		$scope.toggleColumnSelected = function(columnName){
+			if($scope.columns[columnName]){
+				delete $scope.columns[columnName];
+			}else{
+				$scope.columns[columnName] = true;
+			}
+			// TODO: why is $watch not picking this up?
+			$scope.updateAndRunReport();
+		};
+
 		
+
+		
+		
+		$scope.$watchGroup(['dataObject', 'columns', 'filters', 'sortBy', 'sortDesc', 'limit'], $scope.updateAndRunReport);
+
 		$scope.$watch('dataObject', $scope.updateFiltersBuilder);
 		
 		$scope.$watch('filters', function(){
