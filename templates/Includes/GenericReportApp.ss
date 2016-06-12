@@ -18,13 +18,13 @@
 				<select ng-model="dataObject" ng-options="dataObject.humanReadableName for dataObject in dataObjects"></select>
 			</fieldset>
 			<fieldset>
-				<label>Columns</label>
-				<select multiple="multiple" ng-model="fields" ng-options="field.humanReadableName for field in dataObject.fields"></select>
-			</fieldset>
-			<fieldset>
 				<label>Filters</label>
 				<div class="filters-builder"></div>
 				<pre class="filters-debug"></pre>
+			</fieldset>
+			<fieldset>
+				<label>Columns</label>
+				<select multiple="multiple" ng-model="fields" ng-options="field.humanReadableName for field in dataObject.fields"></select>
 			</fieldset>
 			<fieldset>
 				<label>Results per page</label>
