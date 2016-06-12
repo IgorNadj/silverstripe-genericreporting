@@ -49,44 +49,49 @@
 	</section>
 	<hr/>
 	<section class="response" ng-controller="Response">
-		<div class="pagination-wrapper top">
-			<pagination></pagination>
+		<div ng-if="response.totalNumRows > 0">
+			<div class="pagination-wrapper top">
+				<pagination></pagination>
+			</div>
+			<table>
+				<thead>
+					<tr>
+						<th ng-repeat="field in headerColumns" ng-if="response.rows.length > 0">
+							<a ng-click="sortBy(field, false)" ng-if="request.sortBy != field.name">
+								{{field.humanReadableName}}
+							</a>
+							<a ng-click="sortBy(field, true)" ng-if="request.sortBy == field.name && request.sortDesc == 0">
+								{{field.humanReadableName}}
+								<span class="indicator">↑</span>
+							</a>
+							<a ng-click="sortBy(field, false)" ng-if="request.sortBy == field.name && request.sortDesc == 1">
+								{{field.humanReadableName}}
+								<span class="indicator">↓</span>
+							</a>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in response.rows">
+						<td ng-repeat="(key, value) in row">
+							{{value}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="pagination-wrapper bottom">
+				<pagination></pagination>
+			</div>
+
+			<div class="time-taken">
+				Took {{response.timeTakenMs/1000}} seconds 
+			</div>
+
 		</div>
-		<table>
-			<thead>
-				<tr>
-					<th ng-repeat="field in headerColumns" ng-if="response.rows.length > 0">
-						<a ng-click="sortBy(field, false)" ng-if="request.sortBy != field.name">
-							{{field.humanReadableName}}
-						</a>
-						<a ng-click="sortBy(field, true)" ng-if="request.sortBy == field.name && request.sortDesc == 0">
-							{{field.humanReadableName}}
-							<span class="indicator">↑</span>
-						</a>
-						<a ng-click="sortBy(field, false)" ng-if="request.sortBy == field.name && request.sortDesc == 1">
-							{{field.humanReadableName}}
-							<span class="indicator">↓</span>
-						</a>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="row in response.rows">
-					<td ng-repeat="(key, value) in row">
-						{{value}}
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="pagination-wrapper bottom">
-			<pagination></pagination>
-		</div>
+		<div ng-if="response.totalNumRows == 0">
+			No results
+		</div>	
 		
-	
-		<div class="time-taken">
-			Took {{response.timeTakenMs/1000}} seconds 
-		</div>
-	
 	</section>
 	<hr/>
 	<section class="persistance" ng-controller="Persistance">
