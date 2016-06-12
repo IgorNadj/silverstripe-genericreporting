@@ -149,7 +149,7 @@ view-group .rule-value:after {
 	padding: 0.3em 0.5em;
 }
 .columns-set-meta {
-	padding: 0 0.2em 0.5em 0.2em;
+	padding: 0.5em 0.2em;
 }
 .columns-set-meta a {
 	font-weight: bold;
