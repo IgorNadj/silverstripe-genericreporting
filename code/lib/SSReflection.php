@@ -49,6 +49,13 @@ class SSReflection {
 	public static function getDataObjectFields($className, $childClassName = null){
 		$r = array();
 
+		$definedOnTable = $className;
+		$definedOnClass = $className;
+		if($className == 'DataObject'){
+			// e.g. SiteTree has ID, not DataObject
+			$definedOnTable = $childClassName; 
+		}
+
 		// First we manually add in the base-level fields
 		foreach(DataObject::database_fields($className) as $name => $spec){
 			$humanReadableName = $name; // TODO
@@ -56,8 +63,8 @@ class SSReflection {
 				'name' => $name,
 				'type' => $spec,
 				'humanReadableName' => $humanReadableName,
-				'definedOnTable' => $childClassName,
-				'definedOnClass' => $childClassName, 
+				'definedOnTable' => $definedOnTable,
+				'definedOnClass' => $definedOnClass, 
 			);
 		}
 
@@ -68,15 +75,15 @@ class SSReflection {
 					'name' => 'ID', 
 					'humanReadableName' => 'ID', 
 					'type' => 'Int',
-					'definedOnTable' => $childClassName, // e.g. SiteTree has ID, not DataObject
-					'definedOnClass' => $className,
+					'definedOnTable' => $definedOnTable, 
+					'definedOnClass' => $definedOnClass,
 				),
 				array(
 					'name' => 'RecordClassName', 
 					'humanReadableName' => 'Record Class Name', 
 					'type' => 'Varchar(255)',
-					'definedOnTable' => $childClassName, // e.g. SiteTree has ID, not DataObject
-					'definedOnClass' => $className,
+					'definedOnTable' => $definedOnTable,
+					'definedOnClass' => $definedOnClass,
 				),
 			);
 			$r = array_merge($always, $r);
