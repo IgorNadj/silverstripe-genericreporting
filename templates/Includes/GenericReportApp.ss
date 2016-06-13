@@ -40,10 +40,6 @@
 					</div>
 				</div>
 			</fieldset>
-			<fieldset>
-				<label>Results per page</label>
-				<input ng-model="limit" />
-			</fieldset>
 			<button ng-click="mode = 'view'">Done</button>
 		</div>
 	</section>
@@ -91,6 +87,39 @@
 		<div ng-if="response.totalNumRows == 0">
 			No results
 		</div>	
+
+		<div class="page-info">
+			<div class="view-mode view-info" ng-if="!pageInfoEditMode">
+				Showing 
+				<a ng-click="setPageInfoEditMode(true)">{{limit}}</a>
+				rows 
+				–
+				<span ng-bind="firstRowNumber"></span> to 
+				<span ng-bind="lastRowNumber"></span> of 
+				<span ng-bind="response.totalNumRows"></span>
+			</div>
+			<div class="edit-mode fieldset-contents set-limit" ng-if="pageInfoEditMode">
+				<label class="show-label">Show</label>
+				<ul ng-if="!showOtherLimitForm">
+					<li ng-repeat="limitObj in limitObjs">
+						<span class="item not-actionable" ng-if="limit == limitObj.limit">{{limitObj.limit}}</span>
+						<a class="item actionable" ng-if="limit != limitObj.limit" ng-click="setLimit(limitObj.limit); closePageInfoEdit()">{{limitObj.limit}}</a>
+					</li>
+					<li>
+						<a class="item actionable" ng-click="setShowOtherLimitForm(true)">More</a>
+					</li>
+					<span class="the-word-rows">rows</span>
+				</ul>
+				<form ng-if="showOtherLimitForm" ng-submit="setLimit(otherLimit); closePageInfoEdit()">
+					<label>
+						<input type="number" ng-model="otherLimit" class="other-limit-input" />
+						rows
+						<input type="submit" value="Set" />
+					</label>
+				</form>
+				<a class="close-edit-mode" ng-click="closePageInfoEdit()">close</a>
+			</div>
+		</div>
 		
 	</section>
 	<hr/>

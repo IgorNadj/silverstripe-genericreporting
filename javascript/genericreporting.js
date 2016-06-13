@@ -325,8 +325,23 @@
 			$scope.request = data.request;
 			$scope.response = data.response;
 
+			// update limit
+			$scope.limit = $scope.request.limit;
+
 			debug('response: ', data.response);
 		});
+
+		$scope.limit = 20;
+		$scope.limitObjs = [
+			{ limit: 10 },
+			{ limit: 20 },
+			{ limit: 50 },
+			{ limit: 100 },
+		];
+		$scope.otherLimit = 200;
+
+		$scope.pageInfoEditMode = false;
+		$scope.showOtherLimitForm = false;
 
 		$scope.smartPaginationNumUiElements = 7;
 
@@ -501,9 +516,40 @@
 			reportRunner.run(updatedRequest);
 		};
 
+		$scope.setLimit = function(newLimit){
+			// TODO: not sure why direct set variable in template is not working
+			$scope.limit = newLimit;
+		};
+
+		$scope.setPageInfoEditMode = function(flag){
+			// TODO: not sure why direct set variable in template is not working
+			$scope.pageInfoEditMode = flag;
+		};
+
+		$scope.closePageInfoEdit = function(){
+			// TODO: not sure why direct set variable in template is not working
+			$scope.pageInfoEditMode = false;
+			$scope.showOtherLimitForm = false;
+		};
+
+		$scope.setShowOtherLimitForm = function(flag){
+			// TODO: not sure why direct set variable in template is not working
+			$scope.showOtherLimitForm = flag;
+		};
+
+		$scope.rerunWithNewLimit = function(){
+			if(!$scope.request) return;
+			if(!$scope.limit) return;
+			var updatedRequest = $scope.request;
+			updatedRequest.limit = $scope.limit;
+			reportRunner.run(updatedRequest);
+		};
+
+
 		$scope.$watch('response', $scope.updateHeaderColumns);
 		$scope.$watch('response', $scope.updatePagination);
-		
+		$scope.$watch('limit', $scope.rerunWithNewLimit);
+
 	}])
 	.controller('Persistance', ['$scope', 'api', function($scope, api){
 		$scope.saved = [];

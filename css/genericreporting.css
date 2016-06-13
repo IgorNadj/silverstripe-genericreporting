@@ -104,9 +104,6 @@ view-group .rule-value:after {
 	margin: 0.5em 0;
 	text-align: right;
 }
-.pagination-wrapper.top .page-info {
-	display: none; 
-}
 
 /* reset */
 .pagination .page-nav ol {
@@ -138,6 +135,7 @@ view-group .rule-value:after {
 }
 .pagination .page-nav .actionable:hover {
 	background: #72A1D4;
+	color: white;
 }
 
 
@@ -159,3 +157,61 @@ view-group .rule-value:after {
 	display: inline-block;
 }
 
+
+
+.page-info .view-info {
+	padding: 1em 0;
+}
+.page-info .view-info a {
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.page-info .set-limit .other-limit-input {
+	width: 4em;
+}
+.page-info .set-limit {
+	padding: 1em;
+}
+.page-info .set-limit .show-label {
+	font-weight: bold;
+	margin-right: 0.5em;
+}
+.page-info .set-limit .the-word-rows {
+	margin-left: 0.5em;
+}
+.page-info .set-limit ul {
+	display: inline-block;
+}
+.page-info .set-limit li {
+	display: inline-block;
+}
+.page-info .set-limit .item {
+	border: 1px solid rgba(0,0,0,0.1);
+	padding: 0.3em 1em;
+	display: inline-block;
+}
+.page-info .set-limit .item.not-actionable {
+	background: rgba(220, 223, 224, 0.41);
+	color: #999;
+}
+.page-info .set-limit .item.actionable {
+	cursor: pointer;
+	text-decoration: none;
+}
+.page-info .set-limit .actionable:hover {
+	background: #72A1D4;
+	color: white;
+}
+.page-info .set-limit form {
+	display: inline-block;
+}
+.page-info .set-limit input[type=submit] {
+	margin-left: 0.5em;
+}
+
+.page-info .close-edit-mode {
+	float: right;
+	padding: 0.3em 0.5em;
+	cursor: pointer;
+}

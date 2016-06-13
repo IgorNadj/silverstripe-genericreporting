@@ -1,14 +1,7 @@
 <div class="pagination">
-	<div class="page-info">
-		Showing rows <span ng-bind="firstRowNumber"></span> to 
-		<span ng-bind="lastRowNumber"></span> of 
-		<span ng-bind="response.totalNumRows"></span>
-	</div>
-
 	<div class="page-nav">
 		<span ng-if="!hasPrevious" class="item">❮</span>
 		<a ng-if="hasPrevious" ng-click="goToPreviousPage()" class="item actionable">❮</a>
-
 		<ol class="pages">
 			<li ng-repeat="page in smartPages">
 				<span class="item spacer" ng-if="page.spacer">..</span>
@@ -16,7 +9,6 @@
 				<a class="item page page-link actionable" ng-if="!page.spacer && !page.isCurrentPage" ng-click="goToOffset(page.offset)" ng-bind="page.number"></a>
 			</li>
 		</ul>
-		
 		<span ng-if="!hasNext" class="item">❯</span>
 		<a ng-if="hasNext" ng-click="goToNextPage()" class="item actionable">❯</a>
 	</div>
