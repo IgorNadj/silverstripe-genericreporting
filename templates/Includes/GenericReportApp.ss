@@ -99,7 +99,7 @@
 				<ul ng-if="!showOtherLimitForm">
 					<li ng-repeat="limitObj in limitObjs">
 						<span class="item not-actionable" ng-if="limit == limitObj.limit">{{limitObj.limit}}</span>
-						<a class="item actionable" ng-if="limit != limitObj.limit" ng-click="setLimit(limitObj.limit); closePageInfoEdit()">{{limitObj.limit}}</a>
+						<a class="item actionable" ng-if="limit != limitObj.limit" ng-click="setLimit(limitObj.limit);">{{limitObj.limit}}</a>
 					</li>
 					<li>
 						<a class="item actionable" ng-click="setShowOtherLimitForm(true)">More</a>
