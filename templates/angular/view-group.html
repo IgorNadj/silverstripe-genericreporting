@@ -1,4 +1,4 @@
-<span ng-if="!isRoot" class="group-wrapper group-wrapper-open">(</span>
+<span ng-if="!isRoot && filters.rules.length > 1" class="group-wrapper group-wrapper-open">(</span>
 
 <span ng-repeat="rule in filters.rules">
 	<view-group ng-if="rule.condition" filters="rule"></view-group>
@@ -6,4 +6,4 @@
 	<span class="condition" ng-if="!$last">{{filters.condition}}</span>
 </span>
 
-<span ng-if="!isRoot" class="group-wrapper group-wrapper-close">)</span>
+<span ng-if="!isRoot && filters.rules.length > 1" class="group-wrapper group-wrapper-close">)</span>
