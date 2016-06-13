@@ -159,6 +159,9 @@ view-group .rule-value:after {
 
 
 
+.page-info {
+	margin: 1em 0;
+}
 .page-info .view-info {
 	padding: 1em 0;
 }
@@ -210,8 +213,16 @@ view-group .rule-value:after {
 	margin-left: 0.5em;
 }
 
-.page-info .close-edit-mode {
+.page-info .close-edit-mode,
+.page-info .close-other-limit-form {
 	float: right;
 	padding: 0.3em 0.5em;
 	cursor: pointer;
+}
+
+
+
+.time-taken {
+	color: #666;
+	font-style: italic;
 }

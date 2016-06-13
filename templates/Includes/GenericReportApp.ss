@@ -106,14 +106,15 @@
 					</li>
 					<span class="the-word-rows">rows</span>
 				</ul>
-				<form ng-if="showOtherLimitForm" ng-submit="setLimit(otherLimit); closePageInfoEdit()">
+				<form ng-if="showOtherLimitForm" ng-submit="setLimit(otherLimit);">
 					<label>
 						<input type="number" ng-model="otherLimit" class="other-limit-input" />
 						rows
 						<input type="submit" value="Set" />
 					</label>
 				</form>
-				<a class="close-edit-mode" ng-click="closePageInfoEdit()">close</a>
+				<a class="close-other-limit-form" ng-if="showOtherLimitForm" ng-click="setShowOtherLimitForm(false)">back</a>
+				<a class="close-edit-mode" ng-if="!showOtherLimitForm" ng-click="closePageInfoEdit()">close</a>
 			</div>
 		</div>
 
