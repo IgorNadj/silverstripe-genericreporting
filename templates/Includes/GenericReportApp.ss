@@ -123,12 +123,4 @@
 		</div>
 		
 	</section>
-	<hr/>
-	<section class="persistance" ng-controller="Persistance">
-		<label>
-			Name
-			<input type="text" ng-bind="toSave.name" />
-		</label>
-		<a href="" ng-click="save">Save</a>
-	</section>
 </main>
