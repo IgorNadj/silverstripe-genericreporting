@@ -78,12 +78,8 @@
 			<div class="pagination-wrapper bottom">
 				<pagination></pagination>
 			</div>
-
-			<div class="time-taken">
-				Took {{response.timeTakenMs/1000}} seconds 
-			</div>
-
 		</div>
+
 		<div ng-if="response.totalNumRows == 0">
 			No results
 		</div>	
@@ -119,6 +115,10 @@
 				</form>
 				<a class="close-edit-mode" ng-click="closePageInfoEdit()">close</a>
 			</div>
+		</div>
+
+		<div class="time-taken" ng-if="response">
+			Took {{response.timeTakenMs/1000}} seconds 
 		</div>
 		
 	</section>
