@@ -1,8 +1,13 @@
 <main ng-app="GenericReportingApp" class="genericreporting">
 	<section class="request" ng-controller="Request">
 		<div ng-show="mode == 'view'" class="view-mode summary">
-			<span class="view-model-name">{{dataObject.humanReadableNamePlural}}</span>
-			
+
+
+			<span class="view-model-name">
+				<span ng-if="!hasFilters">All</span>
+				<span>{{dataObject.humanReadableNamePlural}}</span>
+			</span>	
+
 			<span ng-if="hasFilters">
 				<span class="view-filters-header">where</span>
 				<view-group filters="filters" is-root="true"></view-group>
