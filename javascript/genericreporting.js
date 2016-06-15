@@ -39,30 +39,41 @@
 	}])
 	.factory('reportRunner', ['api', function(api){
 		var listeners = [];
-		return {
-			run: function(request){
-				if(!request.dataObject) return;
-				var httpRequestParams = {
-					dataObject: request.dataObject.className,
-					'fields[]': request.selectedFields, // have to do this, angular is silly
-					filters:    request.filters,
-					sortBy:     request.sortBy,
-					sortDesc:   request.sortDesc,
-					limit:      request.limit,
-					offset:     request.offset
+
+		var run = function(request){
+			if(!request.dataObject) return;
+			var httpRequestParams = {
+				dataObject: request.dataObject.className,
+				'fields[]': request.selectedFields, // have to do this, angular is silly
+				filters:    request.filters,
+				sortBy:     request.sortBy,
+				sortDesc:   request.sortDesc,
+				limit:      request.limit,
+				offset:     request.offset
+			};
+			api.report(httpRequestParams).then(function(apiResp){
+				var runResult = {
+					httpRequestParams: httpRequestParams,
+					request: request,
+					response: apiResp.data
 				};
-				api.report(httpRequestParams).then(function(apiResp){
-					var runResult = {
-						httpRequestParams: httpRequestParams,
-						request: request,
-						response: apiResp.data
-					};
-					for(var i in listeners){
-						var listener = listeners[i];
-						listener(runResult);
-					}
-				});
-			},
+				for(var i in listeners){
+					var listener = listeners[i];
+					listener(runResult);
+				}
+			});
+		}
+
+		var debouncedRun = debounce(
+			function(request){
+				// (arguments are passed through by debounce())
+				run(request);
+			}, 
+			250 // delay ms, should be long enough to prevent reruns from angular $digest()
+		);
+
+		return {
+			run: debouncedRun,
 			listen: function(listener){
 				listeners.push(listener);
 			}
@@ -594,3 +605,26 @@
 	};
 
 })(jQuery);
+
+/*
+ * Helper functions
+ */
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
