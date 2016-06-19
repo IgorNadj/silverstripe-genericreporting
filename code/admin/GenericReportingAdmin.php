@@ -58,7 +58,7 @@ class GenericReportingAdmin extends LeftAndMain {
 	}
 
 	public function view($request){
-		return $this;//->renderWith('GenericReport_View');
+		return $this;
 	}
 
 	public function getEditForm(){
@@ -137,7 +137,7 @@ class GenericReportingAdmin extends LeftAndMain {
 	}
 
 	public function Content(){
-		return $this->renderWith('GenericReport_View');
+		return $this->renderWith('GenericReporting');
 	}
 
 	public function Breadcrumbs($unlinked = false) {
