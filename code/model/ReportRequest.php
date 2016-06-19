@@ -1,23 +1,42 @@
 <?php 
 
 
-class ReportRequest {
+class ReportRequest extends DataObject {
 
-	public $dataObject;
-	public $fields = array();
+	private static $db = array(
+		'Model'            => 'Varchar',
+		'FieldsSerialized' => 'Text',
+		'FilterSerialized' => 'Text',
+		'SortBy'           => 'Varchar',
+		'SortDesc'         => 'Boolean',
+		'Limit'            => 'Int',
+		'Offset'           => 'Int',
+	);
 
-	
-	
+
+
+	public function setFields(array $fields){
+		$this->FieldsSerialized = serialize($fields);
+	}
+
 	/**
-	 * @var $filter IFilter
-	 */
-	public $filter;
-	
-	public $sortBy;
-	public $sortDesc = true;
+	  * @return array of string field names
+	  */
+	public function getFields(){
+		return unserialize($this->FieldsSerialized);
+	}
 
-	public $limit = 20;
-	public $offset = 0;
-	
+
+	public function setFilter(IFilter $filter){
+		$this->FilterSerialized = serialize($filter);
+	}
+
+	/**
+	  * @return IFilter
+	  */
+	public function getFilter(){
+		return unserialize($this->FilterSerialized);
+	}
+
 }
 

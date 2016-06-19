@@ -30,7 +30,7 @@ class GenericReportingAdmin extends LeftAndMain {
 			if(!$id){
 				return $this->httpError(400, 'Parameter ID required');
 			}
-			$report = GenericReport::get()->byId($id);
+			$report = ReportRequest::get()->byId($id);
 			if($report->exists()){
 				$this->report = $report;
 				// $this->getResponseNegotiator()->setCallback('CurrentForm', function() use(&$controller) {
@@ -117,7 +117,7 @@ class GenericReportingAdmin extends LeftAndMain {
 
 
 	public function Reports(){
-		return GenericReport::get();
+		return ReportRequest::get();
 	}
 
 	public static function getAllReportsLink(){

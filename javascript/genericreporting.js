@@ -1,5 +1,5 @@
 (function($){
-
+	
 	angular
 	.module('GenericReportingApp', [])
 	.factory('api', ['$http', '$q', function($http, $q){
@@ -385,8 +385,8 @@
 
 				// 2. look up DataObject fields by first response row
 				var r = [];
-				for(var i in $scope.response.request.fields){
-					var respFieldName = $scope.response.request.fields[i];
+				for(var i in $scope.request['fields[]']){
+					var respFieldName = $scope.request['fields[]'][i];
 					var respField = null;
 					for(var x in dataObject.fields){
 						var reqField = dataObject.fields[x];
@@ -586,7 +586,6 @@
 	}])
 	.controller('Persistance', ['$scope', 'reportRunner', 'api', function($scope, reportRunner, api){
 		var lastRequest = null;
-		var lastServerSideRequest = null; // request that went out to server, doesn't have angular hashes etc.
 
 		var setHasUnsavedChanges = function(flag){
 			$('.genericreporting').toggleClass('has-unsaved-changes', flag);
@@ -598,13 +597,10 @@
 			}
 
 			var request = data.request;
-			var serverSideRequest = data.response.request;
+			var isDifferent = JSON.stringify(request) != JSON.stringify(lastRequest);
 
-			var isDifferent = JSON.stringify(serverSideRequest) != JSON.stringify(lastServerSideRequest);
-
-			if(!lastServerSideRequest || isDifferent){
+			if(!lastRequest || isDifferent){
 				lastRequest = request;
-				lastServerSideRequest = serverSideRequest;
 				if(!window.genericreporting) window.genericreporting = {};
 				window.genericreporting.lastRequest = lastRequest;
 				setHasUnsavedChanges(true);

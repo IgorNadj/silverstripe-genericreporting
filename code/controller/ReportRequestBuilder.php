@@ -3,6 +3,8 @@
 
 class ReportRequestBuilder {
 	
+	private static $default_limit = 20;
+
 	
 	/**
 	 * @return ReportRequest|null
@@ -15,13 +17,13 @@ class ReportRequestBuilder {
 		if(!$fields || count($fields) === 0) return null;
 		
 		$r = new ReportRequest();
-		$r->dataObject = $dataObject;
-		$r->filter = self::buildFilterObjectFromArray(self::getFiltersArray($request));
-		$r->fields = $fields;
-		$r->sortBy = $request->getVar('sortBy');
-		$r->sortDesc = (boolean) $request->getVar('sortDesc');
-		if($request->getVar('offset')) $r->offset = (int) $request->getVar('offset');
-		if($request->getVar('limit')) $r->limit = (int) $request->getVar('limit');
+		$r->Model = $dataObject;
+		$r->setFilter(self::buildFilterObjectFromArray(self::getFiltersArray($request)));
+		$r->setFields($fields);
+		$r->SortBy = $request->getVar('sortBy');
+		$r->SortDesc = (boolean) $request->getVar('sortDesc');
+		$r->Offset = $request->getVar('offset') ? (int) $request->getVar('offset') : 0;
+		$r->Limit = $request->getVar('limit') ? (int) $request->getVar('limit') : self::$default_limit;
 		
 		return $r;
 	}

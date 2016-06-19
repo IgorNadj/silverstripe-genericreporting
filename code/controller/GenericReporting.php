@@ -58,6 +58,7 @@ class GenericReporting extends Controller {
 		$runner = new ReportRunner();
 		
 		$request = $builder->getRequest($httpRequest);
+		//die('req<pre>'.print_r($request,true));
 		if(!$request) return $this->httpError(400, 'Invalid report parameters');
 		
 		$response = $runner->runReport($request);

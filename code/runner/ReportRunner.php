@@ -7,12 +7,15 @@ class ReportRunner {
 	 * @return ReportResponse
 	 */
 	public function runReport(ReportRequest $request){
-		$obj = $request->dataObject;
+		$obj = $request->Model;
 		
 		$startTimeMs = $this->getTimestampMs();
 
 		$dataQuery = null;
 		$totalQuery = null;
+
+		$fields = $request->getFields();
+		$filter = $request->getFilter();
 
 		/*
 		 * Data Query
@@ -22,24 +25,24 @@ class ReportRunner {
 		$dataQuery = new DataQuery($obj);
 		/* @var $dataQuery DataQuery */
 
-		if($request->fields) $dataQuery->setQueriedColumns($request->fields);
-		// filter
-		$request->filter->apply($dataQuery);
+		// columns
+		$dataQuery->setQueriedColumns($fields);
+		// where
+		$filter->apply($dataQuery);
 		// sort
-		if($request->sortBy){
-			$sortDescStr = $request->sortDesc ? 'DESC' : 'ASC';
-			$dataQuery->sort($request->sortBy, $sortDescStr);
+		if($request->SortBy){
+			$sortDescStr = $request->SortDesc ? 'DESC' : 'ASC';
+			$dataQuery->sort($request->SortBy, $sortDescStr);
 		}
 		// limit and offset
 		//  - we clone the data query here to get the total query because the total query is not limited
 		$totalQuery = clone $dataQuery;
 		//
-		$dataQuery->limit($request->limit, $request->offset);
+		$dataQuery->limit($request->Limit, $request->Offset);
 
 		// Run
 		$response = new ReportResponse();
 		$response->sql = $dataQuery->sql();
-		$response->request = $request;
 
 		$list = GenericReportingDataList::create($obj);
 		/* @var $list GenericReportingDataList */
@@ -49,7 +52,7 @@ class ReportRunner {
 		// setQueriedColumns adds more than we need, we have to filter them out
 		foreach($rows as $row){
 			$rowExpectedColsOnly = array();
-			foreach($request->fields as $field){
+			foreach($fields as $field){
 				$rowExpectedColsOnly[$field] = $row[$field];
 			}
 			$response->rows[] = $rowExpectedColsOnly;
@@ -65,8 +68,8 @@ class ReportRunner {
 		$endTimeMs = $this->getTimestampMs();
 		$response->timeTakenMs = $endTimeMs - $startTimeMs;
 
-		$response->offset = $request->offset;
-		$response->limit = $request->limit;
+		$response->offset = $request->Offset;
+		$response->limit = $request->Limit;
 		
 		// DONE
 		return $response;
