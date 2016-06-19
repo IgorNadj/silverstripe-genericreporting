@@ -9,11 +9,11 @@ class ReportRequestBuilder {
 	/**
 	  * @return true|string if invalid
 	  */
-	public function validate(SS_HTTPRequest $request){ // TODO: rename argument to httpRequest for clarity
-		$dataObject = $request->requestVar('dataObject');
+	public function validate(SS_HTTPRequest $httpRequest){
+		$dataObject = $httpRequest->requestVar('dataObject');
 		if(!$dataObject) return 'Param dataObject required';
 
-		$fields = $request->requestVar('fields');
+		$fields = $httpRequest->requestVar('fields');
 		if(!$fields || count($fields) === 0) return 'Param fields required, and must have at least one.';
 
 		return true;
@@ -22,24 +22,24 @@ class ReportRequestBuilder {
 	/**
 	 * @return ReportRequest|null if invalid
 	 */
-	public function getRequest(SS_HTTPRequest $request){
-		if(!self::validate($request)) return null;
+	public function getRequest(SS_HTTPRequest $httpRequest){
+		if(!self::validate($httpRequest)) return null;
 
 		$r = new ReportRequest();
-		$r->Name = $request->requestVar('Name') ? $request->requestVar('Name') : 'Report';
-		$r->Model = $request->requestVar('dataObject');
-		$r->setFilter($this->buildFilterObjectFromArray($this->getFiltersArray($request)));
-		$r->setFields($request->requestVar('fields'));
-		$r->SortBy = $request->requestVar('sortBy');
-		$r->SortDesc = (boolean) $request->requestVar('sortDesc');
-		$r->Offset = $request->requestVar('offset') ? (int) $request->requestVar('offset') : 0;
-		$r->Limit = $request->requestVar('limit') ? (int) $request->requestVar('limit') : self::$default_limit;
+		$r->Name = $httpRequest->requestVar('Name') ? $httpRequest->requestVar('Name') : 'Report';
+		$r->Model = $httpRequest->requestVar('dataObject');
+		$r->setFilter($this->buildFilterObjectFromArray($this->getFiltersArray($httpRequest)));
+		$r->setFields($httpRequest->requestVar('fields'));
+		$r->SortBy = $httpRequest->requestVar('sortBy');
+		$r->SortDesc = (boolean) $httpRequest->requestVar('sortDesc');
+		$r->Offset = $httpRequest->requestVar('offset') ? (int) $httpRequest->requestVar('offset') : 0;
+		$r->Limit = $httpRequest->requestVar('limit') ? (int) $httpRequest->requestVar('limit') : self::$default_limit;
 		
 		return $r;
 	}
 	
-	public function getFiltersArray(SS_HTTPRequest $request){
-		return json_decode($request->requestVar('filters'), true);
+	public function getFiltersArray(SS_HTTPRequest $httpRequest){
+		return json_decode($httpRequest->requestVar('filters'), true);
 	}
 	
 	/**
