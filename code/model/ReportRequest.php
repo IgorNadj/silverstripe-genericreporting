@@ -4,6 +4,7 @@
 class ReportRequest extends DataObject {
 
 	private static $db = array(
+		'Name'             => 'Varchar',
 		'Model'            => 'Varchar',
 		'FieldsSerialized' => 'Text',
 		'FilterSerialized' => 'Text',

@@ -5,36 +5,10 @@ class GenericReporting extends Controller {
 	private static $allowed_actions = array(
 		'getDataObjects',
 		'report',
-		'view',
-		'saveReport',
+		'save',
 	);
 	
 
-	
-	/*
-	 * Views
-	 */
-	
-	public function index(){
-		return $this->renderWith('GenericReportList');
-	}
-	
-	public function view(SS_HTTPRequest $request){
-		$id = $request->param('ID');
-		if(!$id){
-			// no id provided, start from scratch
-			
-		}
-		
-		return $this->renderWith('GenericReport');
-	}
-	
-
-	
-	
-	/*
-	 * API calls
-	 */
 	
 	public function getDataObjects($request){
 		$r = array();
@@ -53,16 +27,17 @@ class GenericReporting extends Controller {
 		echo $this->formatResponse($request, $r);
 	}
 	
-	public function report($httpRequest){
+	public function report(SS_HTTPRequest $httpRequest){
 		$builder = new ReportRequestBuilder();
 		$runner = new ReportRunner();
 		
+		$validationResult = $builder->validate($httpRequest);
+		if($validationResult !== true){
+			return $this->validationError($validationResult);
+		}
+
 		$request = $builder->getRequest($httpRequest);
-		//die('req<pre>'.print_r($request,true));
-		if(!$request) return $this->httpError(400, 'Invalid report parameters');
-		
 		$response = $runner->runReport($request);
-		
 		return $this->formatResponse($httpRequest, $response);
 	}
 	
@@ -72,10 +47,28 @@ class GenericReporting extends Controller {
 		return json_encode($data);
 	}
 	
-	public function saveReport(SS_HTTPRequest $request){
-		// TODO
+	public function save(SS_HTTPRequest $httpRequest){
+		$builder = new ReportRequestBuilder();
+
+		$validationResult = $builder->validate($httpRequest);
+		if($validationResult !== true){
+			return $this->validationError($validationResult);
+		}
+
+		$request = $builder->getRequest($httpRequest);
+		
+		$request->write();
+		$data = array(
+			'ID'   => $request->ID,
+			'Name' => $request->Name,
+		);
+		return $this->formatResponse($httpRequest, $data);
 	}
 	
+
+	protected function validationError($msg){
+		return $this->httpError(400, 'Invalid report parameters: '.$msg);
+	}
 	
 }
 

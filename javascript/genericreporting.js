@@ -1,5 +1,5 @@
 (function($){
-	
+
 	angular
 	.module('GenericReportingApp', [])
 	.factory('api', ['$http', '$q', function($http, $q){
@@ -23,8 +23,28 @@
 			report: function(params){
 				return $http.get(API_URL+'/report', { params: params });
 			},
-			save: function(report, id){
-				return $http.post(API_URL+'/save', { report: report });
+			save: function(params){
+				// Apparently angular needs serialised post data + set headers...
+				// see: http://stackoverflow.com/questions/11442632/how-can-i-post-data-as-form-data-instead-of-a-request-payload
+				// BUT, our param 'filters' needs to be JSON to allow nesting, so we have to do that manually...
+				var newParams = {};
+				var paramKeys = Object.keys(params);
+				for(var i in paramKeys){
+					var key = paramKeys[i];
+					if(key == 'filters'){
+						newParams[key] = JSON.stringify(params[key]);	
+					}else{
+						newParams[key] = params[key];
+					}
+				}
+				var serialisedParams = $.param(newParams);
+				
+				return $http({
+					method: 'POST',
+					url: API_URL+'/save',
+					data: serialisedParams,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+				});
 			}
 		}
 	}])
@@ -608,11 +628,11 @@
 		});
 
 		$('body').on('click', '.save-report-btn', function(){
-			if(!$('.genericreporting').hasClass('has-unsaved-changes')) return;
+			//if(!$('.genericreporting').hasClass('has-unsaved-changes')) return;
 			console.log('save!', lastRequest);
 			setHasUnsavedChanges(false);
 
-			api.save(2, lastRequest);
+			api.save(lastRequest);
 		});
 	}])
 	.directive('pagination', function(){
@@ -638,35 +658,35 @@
 		};
 	});
 
+
+
+	/*
+	 * Helper functions
+	 */
+
 	function debug(){
 		if(window.genericReportingDebug){
 			console.log.apply(console, arguments);
 		}
 	};
 
-
+	// Returns a function, that, as long as it continues to be invoked, will not
+	// be triggered. The function will be called after it stops being called for
+	// N milliseconds. If `immediate` is passed, trigger the function on the
+	// leading edge, instead of the trailing.
+	function debounce(func, wait, immediate) {
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			var later = function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			var callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	};
 
 })(jQuery);
-
-/*
- * Helper functions
- */
-
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
