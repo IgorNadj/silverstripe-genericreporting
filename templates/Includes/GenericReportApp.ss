@@ -1,4 +1,4 @@
-<main ng-app="GenericReportingApp" class="genericreporting">
+<main ng-app="GenericReportingApp">
 	<section class="request" ng-controller="Request">
 		<div ng-show="mode == 'view'" class="view-mode summary">
 
@@ -88,8 +88,14 @@
 		<div ng-if="response.totalNumRows == 0">
 			No results
 		</div>	
+		<div ng-if="validationError">
+			No results, please check your report.
+		</div>
+		<div ng-if="error">
+			There has been an error, please try again.
+		</div>
 
-		<div class="page-info">
+		<div class="page-info" ng-if="!validationError && !error">
 			<div class="view-mode view-info" ng-if="!pageInfoEditMode">
 				Showing 
 				<a ng-click="setPageInfoEditMode(true)">{{limit}}</a>
@@ -128,4 +134,9 @@
 		</div>
 		
 	</section>
+
+	<div ng-controller="Persistance">
+		<!-- no layout, control external elements -->
+	</div>
+
 </main>

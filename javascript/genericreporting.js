@@ -2,38 +2,29 @@
 
 	angular
 	.module('GenericReportingApp', [])
-	.factory('api', ['$http', function($http){
+	.factory('api', ['$http', '$q', function($http, $q){
 		var API_URL = '/dev/reporting';
 		
-		var _getStore = function(){
-			var defaultStore = {
-				savedReports: []
-			};
-			return window.localStorage.genericReporting ? JSON.parse(window.localStorage.genericReporting) : defaultStore;
-		};
-		var _setStore = function(store){
-			window.localStorage.genericReporting = JSON.stringify(store);
-		};
-		
+		// Defer getDataObjects API call to give us implicit caching
+		var deferredGetDataObjects = $q.defer();
+		$http.get(API_URL+'/getDataObjects').then(
+			function(apiResp){
+				deferredGetDataObjects.resolve(apiResp);
+			},
+			function(err){
+				deferredGetDataObjects.reject(err);
+			}
+		);
+
 		return {
 			getDataObjects: function(){
-				return $http.get(API_URL+'/getDataObjects');
+				return deferredGetDataObjects.promise;
 			},
 			report: function(params){
 				return $http.get(API_URL+'/report', { params: params });
 			},
-			save: function(report){
-				var store = _getStore();
-				
-				var newID = store.savedReports.length;
-				store.savedReports[newID] = report;
-				
-				_setStore(store);
-				return newID;
-			},
-			get: function(id){
-				var store = _getStore();
-				return store.savedReports[id];
+			save: function(report, id){
+				return $http.post(API_URL+'/save', { report: report });
 			}
 		}
 	}])
@@ -41,27 +32,34 @@
 		var listeners = [];
 
 		var run = function(request){
-			if(!request.dataObject) return;
-			var httpRequestParams = {
-				dataObject: request.dataObject.className,
-				'fields[]': request.selectedFields, // have to do this, angular is silly
-				filters:    request.filters,
-				sortBy:     request.sortBy,
-				sortDesc:   request.sortDesc,
-				limit:      request.limit,
-				offset:     request.offset
-			};
-			api.report(httpRequestParams).then(function(apiResp){
-				var runResult = {
-					httpRequestParams: httpRequestParams,
-					request: request,
-					response: apiResp.data
-				};
-				for(var i in listeners){
-					var listener = listeners[i];
-					listener(runResult);
+			api.report(request).then(
+				function(apiResp){
+					var runResult = {
+						request: request,
+						response: apiResp.data
+					};
+					for(var i in listeners){
+						var listener = listeners[i];
+						listener(runResult);
+					}
+				},
+				function(err){
+					if(err.status === 400){
+						// validation error
+						for(var i in listeners){
+							var listener = listeners[i];
+							listener(null, err, null);
+						}
+					}else{
+						// other error
+						for(var i in listeners){
+							var listener = listeners[i];
+							listener(null, null, err);
+						}
+					}
+					
 				}
-			});
+			);
 		}
 
 		var debouncedRun = debounce(
@@ -74,6 +72,9 @@
 
 		return {
 			run: debouncedRun,
+			/*
+			 * listener is a function(apiResponse, validationErrorMessage, errorMessage)
+			 */
 			listen: function(listener){
 				listeners.push(listener);
 			}
@@ -82,10 +83,11 @@
 	.controller('Request', ['$scope', '$timeout', 'api', 'reportRunner', function($scope, $timeout, api, reportRunner){
 		var _isFiltersInit = false;
 		
+		// Params for API
 		$scope.report = {
-			name: null,         // TODO
-			dataObject: null,
-			selectedFields: [],
+			name: null,
+			dataObject: null, // TODO: rename to dataObjectName or modelName
+			'fields[]': [], // have to do this, angular is silly
 			filters: {},
 			sort: null
 		};
@@ -210,14 +212,14 @@
 		
 		$scope.updateReport = function(){
 			if($scope.dataObject){
-				$scope.report.dataObject = $scope.dataObject;
+				$scope.report.dataObject = $scope.dataObject.className;
 			}	
-			$scope.report.selectedFields = [];
+			$scope.report['fields[]'] = [];
 			if($scope.columns){
 				var colNames = Object.keys($scope.columns);
 				for(var i in colNames){
 					var colName = colNames[i];
-					$scope.report.selectedFields.push(colName);
+					$scope.report['fields[]'].push(colName);
 				}
 			}
 			if($scope.filters){
@@ -233,6 +235,7 @@
 		};
 
 		$scope.runReport = function(){
+			if(!$scope.report.dataObject) return;
 			reportRunner.run($scope.report);
 		};
 
@@ -331,17 +334,31 @@
 		}
 		
 	}])
-	.controller('Response', ['$scope', 'reportRunner', function($scope, reportRunner){
-		reportRunner.listen(function(data){
+	.controller('Response', ['$scope', 'reportRunner', 'api', function($scope, reportRunner, api){
+		
+		reportRunner.listen(function(data, validationError, error){	
+			// handle errors
+			$scope.request = null;
+			$scope.response = null;
+			$scope.validationError = false;
+			$scope.error = false;
+			if(validationError){
+				$scope.validationError = true;
+				return
+			}
+			if(error){
+				$scope.error = true;
+				return;
+			}
+		
 			$scope.request = data.request;
 			$scope.response = data.response;
 
 			// update limit
-			$scope.limit = $scope.request.limit;
-
+			$scope.limit = $scope.request.limit; // TODO: why? why not just do data.request.limit?
 			debug('response: ', data.response);
 		});
-
+		
 		$scope.limit = 20;
 		$scope.limitObjs = [
 			{ limit: 10 },
@@ -360,31 +377,36 @@
 			if(!$scope.response) return;
 			if(!$scope.response.rows) return;
 			if($scope.response.rows.length == 0) return;
-			// look up DataObject fields by first response row
-			var r = [];
-			var respRowKeys = Object.keys($scope.response.rows[0]);
-			for(var i in respRowKeys){
-				var respFieldName = respRowKeys[i];
-				var respField = null;
-				for(var x in $scope.request.dataObject.fields){
-					var reqField = $scope.request.dataObject.fields[x];
-					if(reqField.name == respFieldName){
-						respField = reqField;
-						break;
+			
+			// 1. get reference data object to pull out field names
+			api.getDataObjects().then(function(apiResp){
+				var allDataObjects = apiResp.data;
+				var dataObject = $scope.getDataObjectByName(allDataObjects, $scope.request.dataObject);
+
+				// 2. look up DataObject fields by first response row
+				var r = [];
+				for(var i in $scope.response.request.fields){
+					var respFieldName = $scope.response.request.fields[i];
+					var respField = null;
+					for(var x in dataObject.fields){
+						var reqField = dataObject.fields[x];
+						if(reqField.name == respFieldName){
+							respField = reqField;
+							break;
+						}
 					}
-				}
-				if(respField){
 					r.push(respField);
-				}else{
-					// should never happen...
-					console.warn('Server returned column we dont know about: '+respFieldName);
-					r.push({
-						name: respFieldName,
-						humanReadableName: respFieldName
-					});
-				}
+				};
+				
+				$scope.headerColumns = r; 
+			});
+		};
+
+		$scope.getDataObjectByName = function(allDataObjects, name){
+			for(var i in allDataObjects){
+				var d = allDataObjects[i];
+				if(d.className == name) return d;
 			}
-			$scope.headerColumns = r; 
 		};
 
 		$scope.updatePagination = function(){
@@ -562,18 +584,40 @@
 		$scope.$watch('limit', $scope.rerunWithNewLimit);
 
 	}])
-	.controller('Persistance', ['$scope', 'api', function($scope, api){
-		$scope.saved = [];
-		
-		$scope.toSave = {
-			name: 'New Report',
-			report: null
+	.controller('Persistance', ['$scope', 'reportRunner', 'api', function($scope, reportRunner, api){
+		var lastRequest = null;
+		var lastServerSideRequest = null; // request that went out to server, doesn't have angular hashes etc.
+
+		var setHasUnsavedChanges = function(flag){
+			$('.genericreporting').toggleClass('has-unsaved-changes', flag);
 		};
-		
-		$scope.save = function(){
-			api.save();
-		};
-		
+
+		reportRunner.listen(function(data, validationError, error){
+			if(validationError || error){
+				return;
+			}
+
+			var request = data.request;
+			var serverSideRequest = data.response.request;
+
+			var isDifferent = JSON.stringify(serverSideRequest) != JSON.stringify(lastServerSideRequest);
+
+			if(!lastServerSideRequest || isDifferent){
+				lastRequest = request;
+				lastServerSideRequest = serverSideRequest;
+				if(!window.genericreporting) window.genericreporting = {};
+				window.genericreporting.lastRequest = lastRequest;
+				setHasUnsavedChanges(true);
+			}
+		});
+
+		$('body').on('click', '.save-report-btn', function(){
+			if(!$('.genericreporting').hasClass('has-unsaved-changes')) return;
+			console.log('save!', lastRequest);
+			setHasUnsavedChanges(false);
+
+			api.save(2, lastRequest);
+		});
 	}])
 	.directive('pagination', function(){
 		return {
@@ -603,6 +647,8 @@
 			console.log.apply(console, arguments);
 		}
 	};
+
+
 
 })(jQuery);
 

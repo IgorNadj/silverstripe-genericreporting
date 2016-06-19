@@ -32,7 +32,7 @@
 
 
 
-.genericreporting {
+.genericreporting main {
 	padding: 1em 0;
 }
 
@@ -226,3 +226,12 @@ view-group .rule-value:after {
 	color: #666;
 	font-style: italic;
 }
+
+
+
+
+
+.genericreporting.has-unsaved-changes .cms-content-actions {
+	background: green;
+}
+

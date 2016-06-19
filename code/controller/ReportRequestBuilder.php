@@ -10,11 +10,14 @@ class ReportRequestBuilder {
 	public static function getRequest(SS_HTTPRequest $request){
 		$dataObject = $request->getVar('dataObject');
 		if(!$dataObject) return null;
+
+		$fields = $request->getVar('fields');
+		if(!$fields || count($fields) === 0) return null;
 		
 		$r = new ReportRequest();
 		$r->dataObject = $dataObject;
 		$r->filter = self::buildFilterObjectFromArray(self::getFiltersArray($request));
-		$r->fields = $request->getVar('fields');
+		$r->fields = $fields;
 		$r->sortBy = $request->getVar('sortBy');
 		$r->sortDesc = (boolean) $request->getVar('sortDesc');
 		if($request->getVar('offset')) $r->offset = (int) $request->getVar('offset');

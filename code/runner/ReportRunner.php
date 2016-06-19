@@ -46,16 +46,12 @@ class ReportRunner {
 		$list = $list->setDataQuery($dataQuery);
 		$rows = $list->getViewableRows();
 		
+		// setQueriedColumns adds more than we need, we have to filter them out
 		foreach($rows as $row){
-			// setQueriedColumns adds more than we need, we have to filter them out
 			$rowExpectedColsOnly = array();
-			if($request->fields){
-				foreach($request->fields as $field){
-					$rowExpectedColsOnly[$field] = $row[$field];
-				}
-			}else{
-				$rowExpectedColsOnly = $row;
-			}	
+			foreach($request->fields as $field){
+				$rowExpectedColsOnly[$field] = $row[$field];
+			}
 			$response->rows[] = $rowExpectedColsOnly;
 		}
 
