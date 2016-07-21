@@ -62,7 +62,7 @@ class GenericReportingAdmin extends LeftAndMain {
 		return $this;
 	}
 
-	public function getEditForm(){
+	public function getEditForm($id = null, $fields = null){
 		return parent::getEditForm();
 
 		// list

@@ -5,14 +5,27 @@
 	.config(function($routeProvider, $locationProvider){
 		$routeProvider
 			.when('/admin/reporting/saved', {
-				templateUrl : '/genericreporting/templates/angular/list.html'//,
-				//controller  : 'ListController'
+				templateUrl : '/genericreporting/templates/angular/list.html'
 			})
-			.otherwise({
-				templateUrl : '/genericreporting/templates/angular/view.html'//,
-				//controller  : 'ViewController'
+			.when('/admin/reporting', {
+				templateUrl : '/genericreporting/templates/angular/view.html'
 			});
 		$locationProvider.html5Mode(true);
+	})
+	.run(function($location, $rootScope){
+		// TODO: do this properly (currently have to cludge it because SS has PJAX on links, need to disable)
+		$('body').on('click', '.genericreporting-home-link', function(e){
+			e.preventDefault();
+			$rootScope.$apply(function(){
+				$location.path('/admin/reporting');
+			});
+		});
+		$('body').on('click', '.genericreporting-saved-link', function(e){
+			e.preventDefault();
+			$rootScope.$apply(function(){
+				$location.path('/admin/reporting/saved');
+			})
+		});
 	})
 	.controller('ListController', ['$scope', '$location', '$timeout', function($scope, $location, $timeout){
 		
