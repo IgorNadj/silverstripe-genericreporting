@@ -1,4 +1,4 @@
-<main ng-app="GenericReportingApp">
+<main>
 	<section class="request" ng-controller="Request">
 		<div ng-show="mode == 'view'" class="view-mode summary">
 
@@ -137,6 +137,10 @@
 
 	<div ng-controller="Persistance">
 		<!-- no layout, control external elements -->
+
+		<a ng-click="viewSaved()">view saved</a>
+
+		current path: <span ng-bind="$location.path()"></span>
 	</div>
 
 </main>

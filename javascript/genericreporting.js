@@ -1,7 +1,22 @@
 (function($){
 
 	angular
-	.module('GenericReportingApp', [])
+	.module('GenericReportingApp', ['ngRoute'])
+	.config(function($routeProvider, $locationProvider){
+		$routeProvider
+			.when('/admin/reporting/saved', {
+				templateUrl : '/genericreporting/templates/angular/list.html'//,
+				//controller  : 'ListController'
+			})
+			.otherwise({
+				templateUrl : '/genericreporting/templates/angular/view.html'//,
+				//controller  : 'ViewController'
+			});
+		$locationProvider.html5Mode(true);
+	})
+	.controller('ListController', ['$scope', '$location', '$timeout', function($scope, $location, $timeout){
+		
+	}])
 	.factory('api', ['$http', '$q', function($http, $q){
 		var API_URL = '/dev/reporting';
 		
@@ -604,8 +619,10 @@
 		$scope.$watch('limit', $scope.rerunWithNewLimit);
 
 	}])
-	.controller('Persistance', ['$scope', 'reportRunner', 'api', function($scope, reportRunner, api){
+	.controller('Persistance', ['$scope', 'reportRunner', 'api', '$location', function($scope, reportRunner, api, $location){
 		var lastRequest = null;
+
+		$scope.$location = $location;
 
 		var setHasUnsavedChanges = function(flag){
 			$('.genericreporting').toggleClass('has-unsaved-changes', flag);
@@ -632,8 +649,21 @@
 			console.log('save!', lastRequest);
 			setHasUnsavedChanges(false);
 
-			api.save(lastRequest);
+			// api.save(lastRequest).then(function(apiResp){
+			// 	console.log('save resp:', apiResp);
+			// 	var newId = apiResp.data.ID;
+			// 	$location.path('/admin/reporting/view/'+newId);
+			// });
+
+			
+
 		});
+
+		$scope.viewSaved = function(){
+			console.log('viewSaved');
+			$location.path('/admin/reporting/saved');
+		};
+
 	}])
 	.directive('pagination', function(){
 		return {
