@@ -6,6 +6,8 @@ class GenericReporting extends Controller {
 		'getDataObjects',
 		'report',
 		'save',
+		'listAll',
+		'get',
 	);
 	
 
@@ -40,13 +42,13 @@ class GenericReporting extends Controller {
 		$response = $runner->runReport($request);
 		return $this->formatResponse($httpRequest, $response);
 	}
-	
+
 	public function formatResponse(SS_HTTPRequest $request, $data){
 		// TODO: switch formats based on request param
 		$this->getResponse()->addHeader('Content-Type', 'application/json');
 		return json_encode($data);
 	}
-	
+
 	public function save(SS_HTTPRequest $httpRequest){
 		$builder = new ReportRequestBuilder();
 
@@ -56,12 +58,37 @@ class GenericReporting extends Controller {
 		}
 
 		$request = $builder->getRequest($httpRequest);
-		
+
 		$request->write();
 		$data = array(
 			'ID'   => $request->ID,
 			'Name' => $request->Name,
 		);
+		return $this->formatResponse($httpRequest, $data);
+	}
+
+
+	public function listAll(SS_HTTPRequest $httpRequest){
+		$data = array();
+		foreach(ReportRequest::get() as $request){
+			$data[] = array(
+				'ID'   => $request->ID,
+				'Name' => $request->Name,
+			);
+		}
+		return $this->formatResponse($httpRequest, $data);
+	}
+
+	public function get(SS_HTTPRequest $httpRequest){
+		$id = $httpRequest->getVar('id');
+		if(!$id) return $this->httpError(400, 'Param id required');
+		
+		$request = ReportRequest::get()->byID($id);
+		if(!$request) return $this->httpError(404, 'Report not found');
+		
+		$serialiser = new ReportRequestSerialiser();
+		$data = $serialiser->serialise($request);
+		
 		return $this->formatResponse($httpRequest, $data);
 	}
 	

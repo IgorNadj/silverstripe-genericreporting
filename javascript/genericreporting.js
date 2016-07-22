@@ -9,6 +9,9 @@
 			})
 			.when('/admin/reporting', {
 				templateUrl : '/genericreporting/templates/angular/view.html'
+			})
+			.when('/admin/reporting/view/:id', {
+				templateUrl : '/genericreporting/templates/angular/view.html'
 			});
 		$locationProvider.html5Mode(true);
 	})
@@ -28,6 +31,9 @@
 		});
 	})
 	.controller('ListController', ['$scope', '$location', '$timeout', function($scope, $location, $timeout){
+		
+	}])
+	.controller('ViewController', ['$scope', function($scope){
 		
 	}])
 	.factory('api', ['$http', '$q', function($http, $q){
@@ -73,6 +79,9 @@
 					data: serialisedParams,
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 				});
+			},
+			get: function(id){
+				return $http.get(API_URL+'/get', { params: { id: id } });
 			}
 		}
 	}])
@@ -128,7 +137,7 @@
 			}
 		}
 	}])
-	.controller('Request', ['$scope', '$timeout', 'api', 'reportRunner', function($scope, $timeout, api, reportRunner){
+	.controller('Request', ['$scope', '$timeout', 'api', 'reportRunner', '$routeParams', function($scope, $timeout, api, reportRunner, $routeParams){
 		var _isFiltersInit = false;
 		
 		// Params for API
@@ -152,6 +161,7 @@
 		$scope.columns = JSON.parse(JSON.stringify($scope.defaultColumns));
 		$scope.filters = null;
 
+		$scope.sortBy = null;
 		$scope.sortDesc = 1;
 		$scope.limit = 20;
 		$scope.offset = 0;
@@ -163,6 +173,9 @@
 		$scope.mode = 'view';
 
 		$scope.hasFilters = false;
+
+
+
 		
 
 		initFiltersBuilder();
@@ -186,7 +199,54 @@
 			if(!$scope.dataObject && firstDataObject){
 				$scope.dataObject = firstDataObject;
 			}
-		});
+		}).then(function(){
+			// If we have been told to load a report, load it
+			if($routeParams.id){
+				api.get($routeParams.id).then(function(data){
+					var report = data.data;
+					console.log('loaded report with id: '+$routeParams.id, report);
+//					console.log('$scope.dataObject:', JSON.stringify($scope.dataObject));
+//					console.log('$scope.columns:', JSON.stringify($scope.columns));
+//					console.log('$scope.filters:', JSON.stringify($scope.filters));
+//					console.log('$scope.sortDesc:', JSON.stringify($scope.sortDesc));
+//					console.log('$scope.limit:', JSON.stringify($scope.limit));
+//					console.log('$scope.offset:', JSON.stringify($scope.offset));
+					$scope.report.name = report.name;
+					for(var i in $scope.dataObjects){
+						var d = $scope.dataObjects[i];
+						if(d.className == report.model){
+							$scope.dataObject = d;
+							break;
+						}
+					}
+					$scope.columns = {};
+					for(var i in report.fields){
+						var fieldName = report.fields[i];
+						$scope.columns[fieldName] = true;
+					}
+					// TODO: load filters
+					$scope.sortDesc = report.sortDesc;
+					if(report.sortBy){
+						for(var i in $scope.dataObject.fields){
+							var field = $scope.dataObject.fields[i];
+							if(field.name == report.sortBy){
+								$scope.sortBy = field;
+								break;
+							}
+						}
+					}
+					$scope.limit = report.limit;
+					$scope.offset = report.offset;
+//					console.log('$scope.dataObject:', JSON.stringify($scope.dataObject));
+//					console.log('$scope.columns:', JSON.stringify($scope.columns));
+//					console.log('$scope.filters:', JSON.stringify($scope.filters));
+//					console.log('$scope.sortDesc:', JSON.stringify($scope.sortDesc));
+//					console.log('$scope.limit:', JSON.stringify($scope.limit));
+//					console.log('$scope.offset:', JSON.stringify($scope.offset));
+				});
+			}
+		})
+		
 		
 		$scope.updateFiltersBuilder = function(){
 			if(!$scope.dataObject) return;
@@ -658,18 +718,17 @@
 		});
 
 		$('body').on('click', '.save-report-btn', function(){
-			//if(!$('.genericreporting').hasClass('has-unsaved-changes')) return;
-			console.log('save!', lastRequest);
-			setHasUnsavedChanges(false);
+			$scope.$apply(function(){
+				//if(!$('.genericreporting').hasClass('has-unsaved-changes')) return;
+				console.log('save!', lastRequest);
+				setHasUnsavedChanges(false);
 
-			// api.save(lastRequest).then(function(apiResp){
-			// 	console.log('save resp:', apiResp);
-			// 	var newId = apiResp.data.ID;
-			// 	$location.path('/admin/reporting/view/'+newId);
-			// });
-
-			
-
+				api.save(lastRequest).then(function(apiResp){
+					console.log('save resp:', apiResp);
+					var newId = apiResp.data.ID;
+					$location.path('/admin/reporting/view/'+newId);
+				});
+			});
 		});
 
 		$scope.viewSaved = function(){

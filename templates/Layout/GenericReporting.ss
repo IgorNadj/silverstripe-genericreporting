@@ -32,5 +32,5 @@
 	<div class="cms-content-actions south" data-layout-type="border">
 		<button class="save-report-btn">Save</button>
 	</div>
-	
+
 </div>
