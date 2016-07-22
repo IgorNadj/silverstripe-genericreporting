@@ -205,12 +205,7 @@
 				api.get($routeParams.id).then(function(data){
 					var report = data.data;
 					console.log('loaded report with id: '+$routeParams.id, report);
-//					console.log('$scope.dataObject:', JSON.stringify($scope.dataObject));
-//					console.log('$scope.columns:', JSON.stringify($scope.columns));
 //					console.log('$scope.filters:', JSON.stringify($scope.filters));
-//					console.log('$scope.sortDesc:', JSON.stringify($scope.sortDesc));
-//					console.log('$scope.limit:', JSON.stringify($scope.limit));
-//					console.log('$scope.offset:', JSON.stringify($scope.offset));
 					$scope.report.name = report.name;
 					for(var i in $scope.dataObjects){
 						var d = $scope.dataObjects[i];
@@ -237,12 +232,7 @@
 					}
 					$scope.limit = report.limit;
 					$scope.offset = report.offset;
-//					console.log('$scope.dataObject:', JSON.stringify($scope.dataObject));
-//					console.log('$scope.columns:', JSON.stringify($scope.columns));
 //					console.log('$scope.filters:', JSON.stringify($scope.filters));
-//					console.log('$scope.sortDesc:', JSON.stringify($scope.sortDesc));
-//					console.log('$scope.limit:', JSON.stringify($scope.limit));
-//					console.log('$scope.offset:', JSON.stringify($scope.offset));
 				});
 			}
 		})

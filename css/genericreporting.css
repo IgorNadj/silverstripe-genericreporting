@@ -235,3 +235,45 @@ view-group .rule-value:after {
 	background: green;
 }
 
+
+
+
+
+
+
+.filters-builder.query-builder .rule-header {
+	float: right;
+}
+.filters-builder.query-builder .rules-group-body {
+	padding-bottom: 3em;
+}
+.filters-builder.query-builder .btn-group.group-actions {
+	position: absolute;
+	bottom: 0.5em;
+	left: 2.5em;
+}
+.filters-builder.query-builder .rules-group-header .group-conditions input[name$=_cond] {
+	display: inline-block;
+}
+.filters-builder.query-builder .rules-group-header .group-conditions .disabled {
+	display: none;
+}
+
+.filters-builder.query-builder .rules-group-container {
+	padding: 0;
+	background: none;
+	border: 0;
+}
+
+.filters-builder.query-builder .rule-container {
+	border-radius: 0;
+	border: 1px solid transparent;
+	line-height: 2.2em;
+}
+.filters-builder.query-builder .rules-list>::before,
+.filters-builder.query-builder .rules-list>::after {
+	display: none;
+}
+.filters-builder.query-builder > .rules-group-container > .rules-group-body > .rules-list {
+	padding: 0;
+}
