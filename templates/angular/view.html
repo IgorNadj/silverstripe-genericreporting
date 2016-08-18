@@ -1,7 +1,16 @@
 <main ng-controller="ViewController">
 	<section class="request" ng-controller="Request">
+		<header>
+			<ul class="toggle-buttons">
+				<li>
+					<a ng-href="" ng-click="mode='view'" ng-class="{active:mode=='view'}">View</a>
+				</li>
+				<li>
+					<a ng-href="" ng-click="mode='edit'" ng-class="{active:mode=='edit'}">Edit</a>
+				</li>
+			</ul>
+		</header>
 		<div ng-show="mode == 'view'" class="view-mode summary">
-
 
 			<span class="view-model-name">
 				<span ng-if="!hasFilters">All</span>
@@ -13,9 +22,6 @@
 				<view-group filters="filters" is-root="true"></view-group>
 			</span>
 
-			<div class="view-mode-buttons">
-				<button ng-click="mode = 'edit'">Edit</button>
-			</div>
 		</div>
 		<div ng-show="mode == 'edit'" class="edit-mode form">
 			<fieldset class="model">
@@ -45,10 +51,8 @@
 					</div>
 				</div>
 			</fieldset>
-			<button ng-click="mode = 'view'">Done</button>
 		</div>
 	</section>
-	<hr/>
 	<section class="response" ng-controller="Response">
 		<div ng-if="response.totalNumRows > 0">
 			<div class="pagination-wrapper top">

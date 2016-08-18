@@ -26,9 +26,6 @@
 	background: #F0F4F7;
 }
 
-.genericreporting fieldset {
-	margin-bottom: 2em;
-}
 
 
 
@@ -41,23 +38,26 @@
 }
 
 
-
-.fieldset-contents {
+.edit-mode {
+	margin-top: 4em;
+}
+.edit-mode fieldset {
+	padding: 1em 0.5em;
 	background: white;
-	padding: 0.5em 0.5em;
 	border: rgba(0,0,0,1);
 	box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 }
-.model .fieldset-contents {
-	display: inline-block;
+.edit-mode .fieldset-contents {
+	padding: 0.3em 1.5em;
 }
+
 
 
 
 .view-mode.summary {
 	font-size: 1.1em;
 	line-height: 1.5em;
-	padding: 1em 0;
+	padding: 1em 0.5em;
 }
 
 .view-model-name {
@@ -78,25 +78,25 @@ view-group .group-wrapper {
 	color: #72A1D4;
 }
 
-view-group .rule-value:before,
-view-group .rule-value:after {
-	content: '"';
-	margin: 0 0.1em;
-	color: #A29F9F;
+
+view-group .rule-operator {
+	font-size: 0.9em;
+	padding: 0.1em 0.4em;
+	border: 1px solid rgba(0,0,0,0.1);
+	border-radius: 3px;
+	background: #ffefc6;
+	text-shadow: 0px 1px 1px white;
+	box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
 }
 
-
 .view-filters-header {
+	display: none;
 	font-weight: bold;
 	text-transform: lowercase;
 	color: #72A1D4;
 	margin: 0 0.3em;
 }
 
-.view-mode-buttons {
-	margin-top: 2em;
-
-}
 
 
 
@@ -240,7 +240,6 @@ view-group .rule-value:after {
 
 
 
-
 .filters-builder.query-builder .rule-header {
 	float: right;
 }
@@ -276,4 +275,50 @@ view-group .rule-value:after {
 }
 .filters-builder.query-builder > .rules-group-container > .rules-group-body > .rules-list {
 	padding: 0;
+}
+
+.request header {
+	position: absolute;
+	text-align: right;
+	clear: both;
+	right: 1.5em;
+	top: 2em;
+}
+.toggle-buttons li {
+	float: left;
+}
+.toggle-buttons a {
+	padding: 0.5em 1.2em;
+	background: #dbe9f3;
+	text-decoration: none !important;
+	color: #4f5861;
+	border-radius: 4px;
+	border: 1px solid rgba(0,0,0,0.1);
+	text-shadow: 0 1px 1px white;
+}
+.toggle-buttons li:last-child a {
+	border-radius: 0 4px 4px 0;
+	border-left: 0;
+}
+.toggle-buttons li:first-child a {
+	border-radius: 4px 0 0 4px;
+}
+.toggle-buttons a.active {
+	background: #86a9c1;
+	color: white;
+	text-shadow: 0 1px 1px black;
+}
+.toggle-buttons a:not(.active):hover{ 
+	cursor: pointer;
+	background: #72A1D4;
+	color: white;
+	text-shadow: 0 1px 1px black;
+}
+
+
+
+
+
+.response {
+	margin-top: 2em;
 }
