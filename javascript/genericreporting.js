@@ -244,7 +244,8 @@
 			for(var i in $scope.dataObject.fields){
 				var field = $scope.dataObject.fields[i];
 				var filter = {
-					id: field.definedOnTable+'.'+field.name
+					id: field.definedOnTable+'.'+field.name,
+					label: field.humanReadableName
 				};
 				if(field.type == 'Int') filter.type = 'integer';
 				if(field.type == 'Varchar(255)') filter.type = 'string'; // TODO: other varchars
@@ -280,15 +281,46 @@
 			var rules = $('.filters-builder').queryBuilder('getRules');
 			$scope.filters = rules;
 			
-			debug('rules:', rules);
+			$scope.filters = $scope.addHumanReadableNameToFilters($scope.filters);
+			
+			debug('rules:', $scope.filters);
 		};
 		
+		$scope.addHumanReadableNameToFilters = function(node){
+			if(node.field){
+				var humanReadableName = null;
+				for(var i in $scope.dataObjects){
+					var d = $scope.dataObjects[i];
+					for(var j in d.fields){
+						var f = d.fields[j];
+						var fullyQualifiedFieldName = d.className + '.' + f.name;
+						if(fullyQualifiedFieldName == node.field){
+							humanReadableName = f.humanReadableName;
+							break;
+						}
+					}
+					if(humanReadableName){
+						// found in inner loop, break out
+						break;
+					}
+				}
+				node.humanReadableName = humanReadableName;
+				return node;
+			}else{
+				// group
+				for(var i in node.rules){
+					node.rules[i] = $scope.addHumanReadableNameToFilters(node.rules[i]);
+				}
+				return node;
+			}
+		};
+
 		$scope.buildFilters = function(node){
 			if(node.field){
 				return {
-					field:    node.field,
-					operator: node.operator,
-					value:    node.value
+					field:             node.field,
+					operator:          node.operator,
+					value:             node.value
 				}
 			}else{
 				// group
@@ -322,6 +354,7 @@
 			}
 			if($scope.filters){
 				$scope.report.filters = $scope.buildFilters($scope.filters);
+				console.log('$scope.report.filters', $scope.report.filters);
 			}
 			$scope.report.sortBy = null;
 			if($scope.sortBy){
@@ -340,6 +373,7 @@
 		$scope.updateAndRunReport = function(){
 			$scope.updateReport();
 			$scope.runReport();
+			$scope.filtersJSON = JSON.stringify($scope.filters);
 		};
 
 		$scope.toggleColumnSelected = function(columnName){
