@@ -56,11 +56,16 @@
 	}])
 	.controller('ListController', ['$scope', '$location', '$timeout', 'api', 'nav', function($scope, $location, $timeout, api, nav){
 		$scope.reports = [];
+		$scope.editingID = 0;
 		api.listAll().then(function(data){
 			$scope.reports = data.data;
 		});
 		$scope.loadReport = function(id){
 			$location.path('/admin/reporting/view/'+id);
+		};
+		$scope.startEditing = function(id){
+			console.log('startEditing', id);
+			$scope.editingID = id;
 		};
 		nav.setLocationString('Saved Reports');
 	}])
@@ -295,6 +300,7 @@
 				_isFiltersInit = true;
 			}
 			$('.filters-builder').queryBuilder('setFilters', true, filters);
+			console.log('setFilters', filters);
 			_onFiltersChanged();
 		};
 		

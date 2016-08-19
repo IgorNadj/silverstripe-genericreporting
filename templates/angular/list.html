@@ -1,9 +1,22 @@
 <main ng-controller="ListController">
 
-	<ul>
-		<li ng-repeat="report in reports">
-			<a ng-href="" ng-click="loadReport(report.ID)">#{{report.ID}} {{report.Name}}</a>
-		</li>
-	</ul>
+	<table class="report-list">
+		<tbody>
+			<tr ng-repeat="report in reports">
+				<td>#{{report.ID}}</td>
+				<td class="name">
+					<div ng-if="editingID == report.ID">
+						<input ng-bind="report.Name" />
+					</div>
+					<div ng-if="editingID != report.ID">
+						<a ng-href="" ng-click="loadReport(report.ID)">{{report.Name}}</a>
+						<a class="edit-button" ng-href="" ng-click="startEditing(report.ID)">
+							<span class="icon-wrapper"><img class="icon" src="/genericreporting/vendor/SVG/pencil.svg"/></span>
+						</a>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
 </main>

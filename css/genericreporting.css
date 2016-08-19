@@ -257,7 +257,7 @@ view-group .condition {
 
 
 .genericreporting.has-unsaved-changes .cms-content-actions {
-	background: green;
+/* 	background: green; */
 }
 
 
@@ -399,6 +399,7 @@ view-group .condition {
 	display: inline-block;
 	padding: 0;
 	margin-right: 0.2em;
+	vertical-align: top;
 }
 .genericreporting .view-mode .icon-wrapper {
 	margin-right: 0.4em;
@@ -407,4 +408,21 @@ view-group .condition {
 .genericreporting .icon {
 	width: 100%;
 	height: 100%;
+}
+
+
+
+.genericreporting .report-list td {
+	white-space: nowrap;
+	border: 0;
+}
+.genericreporting .report-list a {
+	padding: 0.5em 1em;
+	cursor: pointer;
+}
+.genericreporting .report-list td.name {
+	width: 100%;
+}
+.genericreporting .report-list td:not(:hover) .edit-button {
+	display: none;
 }
