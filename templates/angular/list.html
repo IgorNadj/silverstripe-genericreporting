@@ -1,5 +1,9 @@
 <main ng-controller="ListController">
-	
-	list
+
+	<ul>
+		<li ng-repeat="report in reports">
+			<a ng-href="" ng-click="loadReport(report.ID)">#{{report.ID}} {{report.Name}}</a>
+		</li>
+	</ul>
 
 </main>

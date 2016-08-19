@@ -16,25 +16,56 @@
 		$locationProvider.html5Mode(true);
 	})
 	.run(function($location, $rootScope){
-		// TODO: do this properly (currently have to cludge it because SS has PJAX on links, need to disable)
-		$('body').on('click', '.genericreporting-home-link', function(e){
-			e.preventDefault();
-			$rootScope.$apply(function(){
-				$location.path('/admin/reporting');
-			});
-		});
-		$('body').on('click', '.genericreporting-saved-link', function(e){
-			e.preventDefault();
-			$rootScope.$apply(function(){
-				$location.path('/admin/reporting/saved');
-			})
-		});
 	})
-	.controller('ListController', ['$scope', '$location', '$timeout', function($scope, $location, $timeout){
-		
+	.controller('NavTabs', ['$scope', '$location', function($scope, $location){
+		$scope.activeTab = 'report';
+		$scope.goToReport = function(){
+			$location.path('/admin/reporting');
+		};
+		$scope.goToSaved = function(){
+			$location.path('/admin/reporting/saved');
+		};
+		$scope.$on('$locationChangeSuccess', function(e, newLocation){
+			if(newLocation.indexOf('/admin/reporting/view/') !== -1){
+				$scope.activeTab = 'report';
+			}else if(newLocation.indexOf('/admin/reporting/saved') !== -1){
+				$scope.activeTab = 'saved';
+			}else{
+				$scope.activeTab = 'report';
+			}
+		});
 	}])
-	.controller('ViewController', ['$scope', function($scope){
-		
+	.factory('nav', ['$rootScope', function($rootScope){
+		return {
+			setLocationString: function(str){
+				$rootScope.$broadcast('locationChanged', str);
+			}
+		};
+	}])
+	.controller('Breadcrumbs', ['$scope', function($scope){
+		$scope.nested = false;
+		$scope.title = '';
+		$scope.$on('locationChanged', function(e, newLocationStr){
+			$scope.title = newLocationStr;
+			if(newLocationStr){
+				$scope.nested = true;
+			}else{
+				$scope.nested = false;
+			}
+		});
+	}])
+	.controller('ListController', ['$scope', '$location', '$timeout', 'api', 'nav', function($scope, $location, $timeout, api, nav){
+		$scope.reports = [];
+		api.listAll().then(function(data){
+			$scope.reports = data.data;
+		});
+		$scope.loadReport = function(id){
+			$location.path('/admin/reporting/view/'+id);
+		};
+		nav.setLocationString('Saved Reports');
+	}])
+	.controller('ViewController', ['$scope', 'nav', function($scope, nav){
+		nav.setLocationString('');
 	}])
 	.factory('api', ['$http', '$q', function($http, $q){
 		var API_URL = '/dev/reporting';
@@ -79,6 +110,9 @@
 					data: serialisedParams,
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 				});
+			},
+			listAll: function(){
+				return $http.get(API_URL+'/listAll');
 			},
 			get: function(id){
 				return $http.get(API_URL+'/get', { params: { id: id } });
@@ -137,7 +171,7 @@
 			}
 		}
 	}])
-	.controller('Request', ['$scope', '$timeout', 'api', 'reportRunner', '$routeParams', function($scope, $timeout, api, reportRunner, $routeParams){
+	.controller('Request', ['$scope', '$timeout', 'api', 'reportRunner', '$routeParams', 'nav', function($scope, $timeout, api, reportRunner, $routeParams, nav){
 		var _isFiltersInit = false;
 		
 		// Params for API
@@ -237,6 +271,8 @@
 					$scope.limit = report.limit;
 					$scope.offset = report.offset;
 //					console.log('$scope.filters:', JSON.stringify($scope.filters));
+					// update nav
+					nav.setLocationString('#'+$routeParams.id+' '+$scope.report.name);
 				});
 			}
 		})
@@ -830,6 +866,11 @@
 		if(type == 'ForeignKey') return 'integer'; // TODO: use select type
 		if(type == 'Boolean') return 'boolean';
 		if(!type) return 'string';
+	}
+	if (typeof String.prototype.endsWith !== 'function') {
+		String.prototype.endsWith = function(suffix) {
+			return this.indexOf(suffix, this.length - suffix.length) !== -1;
+		};
 	}
 
 })(jQuery);
