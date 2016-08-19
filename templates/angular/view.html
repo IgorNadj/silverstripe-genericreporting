@@ -13,11 +13,13 @@
 		<div ng-show="mode == 'view'" class="view-mode summary">
 
 			<span class="view-model-name">
+				<span class="icon-wrapper"><img class="icon" src="/genericreporting/vendor/SVG/stack.svg"/></span>
 				<span ng-if="!hasFilters">All</span>
 				<span>{{dataObject.humanReadableNamePlural}}</span>
 			</span>	
 
 			<span ng-if="hasFilters" class="view-filters">
+				<span class="icon-wrapper"><img class="icon" src="/genericreporting/vendor/SVG/filter.svg"/></span>
 				<span class="view-filters-header">where</span>
 				<view-group filters="filters" is-root="true"></view-group>
 			</span>
@@ -25,19 +27,28 @@
 		</div>
 		<div ng-show="mode == 'edit'" class="edit-mode form">
 			<fieldset class="model">
-				<h3>Model</h3>
+				<h3>
+					<span class="icon-wrapper"><img class="icon" src="/genericreporting/vendor/SVG/stack.svg"/></span>
+					Model
+				</h3>
 				<div class="fieldset-contents">
 					<select ng-model="dataObject" ng-options="dataObject.humanReadableName for dataObject in dataObjects"></select>
 				</div>
 			</fieldset>
 			<fieldset class="filters">
-				<h3>Filters</h3>
+				<h3>
+					<span class="icon-wrapper"><img class="icon" src="/genericreporting/vendor/SVG/filter.svg"/></span>
+					Filters
+				</h3>
 				<div class="fieldset-contents">
 					<div class="filters-builder"></div>
 				</div>
 			</fieldset>
 			<fieldset class="columns">
-				<h3>Columns</h3>
+				<h3>
+					<span class="icon-wrapper"><img class="icon" src="/genericreporting/vendor/SVG/table.svg"/></span>
+					Columns
+				</h3>
 				<div class="fieldset-contents">
 					<div class="columns-set">
 						<label ng-repeat="field in dataObject.fields" class="column-checkbox">
