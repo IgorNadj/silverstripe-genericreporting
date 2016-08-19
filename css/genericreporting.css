@@ -72,7 +72,11 @@
 	line-height: 2em;
 }
 
-.view-group .condition {
+view-group {
+	display: block;
+	margin: 0.5em 1em;
+}
+view-group .condition {
 	text-transform: lowercase;
 	margin-left: 1em;
 }
@@ -260,12 +264,31 @@ view-group .condition {
 	float: right;
 }
 .filters-builder.query-builder .rules-group-body {
-	padding-bottom: 3em;
+	padding-bottom: 2.8em;
+}
+
+
+.filters-builder.query-builder .rules-group-body .rules-list {
+	padding: 0.5em 0;
+}
+
+.filters-builder.query-builder .rules-group-header {
+	margin-left: 0.5em;
+	margin-bottom: 0;
+}
+.filters-builder.query-builder  > .rules-group-container > .rules-group-header { /* first child */
+	margin-left: 1.3em;
 }
 .filters-builder.query-builder .btn-group.group-actions {
 	position: absolute;
-	bottom: 0.5em;
-	left: 2.5em;
+	bottom: 1em;
+	left: 1em;
+}
+.filters-builder.query-builder > .rules-group-container > .rules-group-header > .btn-group.group-actions { /* first child */
+	bottom: 0;
+}
+.filters-builder > .rules-group-container > .rules-group-header .btn-group.group-actions { /* first child */
+	left: 0em;
 }
 .filters-builder.query-builder .rules-group-header .group-conditions input[name$=_cond] {
 	display: inline-block;
@@ -275,14 +298,27 @@ view-group .condition {
 }
 
 .filters-builder.query-builder .rules-group-container {
-	padding: 0;
+	padding: 0.5em !important;
+	padding-right: 0 !important;
 	background: none;
+	border: 3px solid #c1cdd6;
+	border-top: 0;
+	border-right: 0;
+	border-bottom: 0;
+	border-radius: 0;
+	margin-left: 1.5em;
+	padding: 0;
+}
+.filters-builder.query-builder > .rules-group-container { /* first child */
+	padding: 0 !important;
 	border: 0;
+	margin: 0;
 }
 
 .filters-builder.query-builder .rule-container {
 	border-radius: 0;
 	border: 1px solid transparent;
+	margin: 0;
 	line-height: 2.2em;
 }
 .filters-builder.query-builder .rules-list>::before,
@@ -342,6 +378,10 @@ view-group .condition {
 	display:block;
 	margin: 1em 0;
 }
+.view-mode.summary > .view-filters { /* first child */
+	margin: 0;
+}
+
 .view-filters .rule-and-condition {
 	display: block;
 }

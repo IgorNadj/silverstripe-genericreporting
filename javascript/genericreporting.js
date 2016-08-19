@@ -373,7 +373,6 @@
 		$scope.updateAndRunReport = function(){
 			$scope.updateReport();
 			$scope.runReport();
-			$scope.filtersJSON = JSON.stringify($scope.filters);
 		};
 
 		$scope.toggleColumnSelected = function(columnName){
