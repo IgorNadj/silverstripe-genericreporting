@@ -219,7 +219,11 @@
 						var fieldName = report.fields[i];
 						$scope.columns[fieldName] = true;
 					}
-					// TODO: load filters
+					// load filters into query builder (which will load them into our scope)
+					var rulesToLoadIntoQueryBuilder = convertCustomToQueryBuilder(report.filter);
+					console.log('converted rulesToLoadIntoQueryBuilder:', rulesToLoadIntoQueryBuilder);
+					$('.filters-builder').queryBuilder('setRules', rulesToLoadIntoQueryBuilder);
+					//
 					$scope.sortDesc = report.sortDesc;
 					if(report.sortBy){
 						for(var i in $scope.dataObject.fields){
@@ -243,26 +247,11 @@
 			var filters = [];
 			for(var i in $scope.dataObject.fields){
 				var field = $scope.dataObject.fields[i];
-				var filter = {
+				filters.push({
 					id: field.definedOnTable+'.'+field.name,
-					label: field.humanReadableName
-				};
-				if(field.type == 'Int') filter.type = 'integer';
-				if(field.type == 'Varchar(255)') filter.type = 'string'; // TODO: other varchars
-				if(field.type == 'SS_Datetime') filter.type = 'datetime';
-				if(field.type == 'Text') filter.type = 'string';
-				if(field.type == 'ForeignKey') filter.type = 'integer'; // TODO: use select type
-				if(field.type == 'Boolean'){
-					// TODO: other bools
-					filter.type = 'boolean';
-					filter.input = 'radio';
-					filter.values = {
-						1: 'Yes',
-						0: 'No'
-					}
-				}
-				if(!filter.type) filter.type = 'string';
-				filters.push(filter);
+					label: field.humanReadableName,
+					type: convertSSFieldTypeToQueryBuilder(field.type)
+				});
 			}
 			
 			if(!_isFiltersInit){
@@ -315,26 +304,6 @@
 			}
 		};
 
-		$scope.buildFilters = function(node){
-			if(node.field){
-				return {
-					field:             node.field,
-					operator:          node.operator,
-					value:             node.value
-				}
-			}else{
-				// group
-				var r = {
-					condition: node.condition,
-					rules:     []
-				};
-				for(var i in node.rules){
-					r.rules.push($scope.buildFilters(node.rules[i]));
-				}
-				return r;
-			}
-		};
-
 		$scope.updateHasFilters = function(){
 			$scope.hasFilters = false;
 			if($scope.filters && $scope.filters.condition) $scope.hasFilters = true;
@@ -353,8 +322,8 @@
 				}
 			}
 			if($scope.filters){
-				$scope.report.filters = $scope.buildFilters($scope.filters);
-				console.log('$scope.report.filters', $scope.report.filters);
+				$scope.report.filters = convertQueryBuilderToCustom($scope.filters);
+//				console.log('$scope.report.filters', $scope.report.filters);
 			}
 			$scope.report.sortBy = null;
 			if($scope.sortBy){
@@ -460,7 +429,7 @@
 					$scope.$apply(function(){
 						_onFiltersChanged();
 					});
-				}, 0);		
+				}, 0);
 			});
 		}
 		
@@ -813,5 +782,54 @@
 			if (callNow) func.apply(context, args);
 		};
 	};
+
+	function convertQueryBuilderToCustom(node){
+		if(node.field){
+			return {
+				field:             node.field,
+				operator:          node.operator,
+				value:             node.value
+			}
+		}else{
+			// group
+			var r = {
+				condition: node.condition,
+				rules:     []
+			};
+			for(var i in node.rules){
+				r.rules.push(convertQueryBuilderToCustom(node.rules[i]));
+			}
+			return r;
+		}
+	};
+	function convertCustomToQueryBuilder(node){
+		if(node.type == 'single'){
+			return {
+				id:       node.field,
+				field:    node.field,
+				operator: node.operation,
+				value:    node.value
+			}
+		}else{
+			// group
+			var r = {
+				condition: node.condition,
+				rules: []
+			};
+			for(var i in node.rules){
+				r.rules.push(convertCustomToQueryBuilder(node.rules[i]));
+			}
+			return r;
+		}
+	};
+	function convertSSFieldTypeToQueryBuilder(type){
+		if(type == 'Int') return 'integer';
+		if(type == 'Varchar(255)') return 'string'; // TODO: other varchars
+		if(type == 'SS_Datetime') return 'datetime';
+		if(type == 'Text') return 'string';
+		if(type == 'ForeignKey') return 'integer'; // TODO: use select type
+		if(type == 'Boolean') return 'boolean';
+		if(!type) return 'string';
+	}
 
 })(jQuery);

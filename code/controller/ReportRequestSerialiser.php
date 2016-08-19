@@ -29,8 +29,8 @@ class ReportRequestSerialiser {
 			return array(
 				'type'      => 'single',
 				'field'     => $filter->field,
-				'operation' => $filter->field,
-				'value'     => $filter->field,
+				'operation' => $filter->operation,
+				'value'     => $filter->value,
 			);
 		}else if($filter instanceof CompositeFilter){
 			$r = array(
